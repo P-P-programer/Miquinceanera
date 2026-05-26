@@ -27,6 +27,17 @@ function getCountdown(targetDate) {
 
 export default function EventApp() {
     const [countdown, setCountdown] = useState(() => getCountdown(eventDate));
+    const [formState, setFormState] = useState({
+        titular_name: '',
+        titular_email: '',
+        titular_phone: '',
+        guests: ['', '', '', ''],
+    });
+    const [submissionState, setSubmissionState] = useState({
+        status: 'idle',
+        message: '',
+        registration: null,
+    });
 
     useEffect(() => {
         const timer = window.setInterval(() => {
@@ -46,6 +57,77 @@ export default function EventApp() {
         { label: 'Grupos registrados', value: statsSeed.registeredGroups },
         { label: 'Invitados confirmados', value: statsSeed.confirmedGuests },
     ];
+
+    const hasRegistration = submissionState.registration !== null;
+
+    function updateField(field, value) {
+        setFormState((current) => ({
+            ...current,
+            [field]: value,
+        }));
+    }
+
+    function updateGuest(index, value) {
+        setFormState((current) => {
+            const guests = [...current.guests];
+            guests[index] = value;
+
+            return {
+                ...current,
+                guests,
+            };
+        });
+    }
+
+    async function handleSubmit(event) {
+        event.preventDefault();
+
+        setSubmissionState({
+            status: 'loading',
+            message: 'Procesando registro...',
+            registration: null,
+        });
+
+        const guests = formState.guests
+            .map((name) => name.trim())
+            .filter(Boolean)
+            .map((name) => ({ name }));
+
+        try {
+            const response = await fetch('/api/registrations', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                },
+                body: JSON.stringify({
+                    titular_name: formState.titular_name,
+                    titular_email: formState.titular_email || null,
+                    titular_phone: formState.titular_phone || null,
+                    guests,
+                }),
+            });
+
+            const payload = await response.json();
+
+            if (!response.ok) {
+                const firstError = Object.values(payload.errors || {})[0]?.[0] || 'No se pudo completar el registro.';
+                throw new Error(firstError);
+            }
+
+            setSubmissionState({
+                status: 'success',
+                message: payload.message,
+                registration: payload.data,
+            });
+        } catch (error) {
+            setSubmissionState({
+                status: 'error',
+                message: error instanceof Error ? error.message : 'Ocurrió un error inesperado.',
+                registration: null,
+            });
+        }
+    }
 
     const privateSections = [
         'Detalles del evento',
@@ -154,19 +236,95 @@ export default function EventApp() {
                             </p>
                         </div>
 
-                        <form className="space-y-4">
-                            <input className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition focus:border-cyan-300/40" placeholder="Nombre completo del titular" />
-                            <input className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition focus:border-cyan-300/40" placeholder="Documento o teléfono del titular" />
+                        <form className="space-y-4" onSubmit={handleSubmit}>
+                            <input
+                                className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition focus:border-cyan-300/40"
+                                placeholder="Nombre completo del titular"
+                                value={formState.titular_name}
+                                onChange={(event) => updateField('titular_name', event.target.value)}
+                                required
+                            />
+                            <input
+                                type="email"
+                                className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition focus:border-cyan-300/40"
+                                placeholder="Correo del titular"
+                                value={formState.titular_email}
+                                onChange={(event) => updateField('titular_email', event.target.value)}
+                            />
+                            <input
+                                className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition focus:border-cyan-300/40"
+                                placeholder="Teléfono del titular"
+                                value={formState.titular_phone}
+                                onChange={(event) => updateField('titular_phone', event.target.value)}
+                            />
                             <div className="grid gap-3 sm:grid-cols-2">
-                                <input className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition focus:border-cyan-300/40" placeholder="Acompañante 1" />
-                                <input className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition focus:border-cyan-300/40" placeholder="Acompañante 2" />
-                                <input className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition focus:border-cyan-300/40" placeholder="Acompañante 3" />
-                                <input className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition focus:border-cyan-300/40" placeholder="Acompañante 4" />
+                                {formState.guests.map((guest, index) => (
+                                    <input
+                                        key={`guest-${index}`}
+                                        className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition focus:border-cyan-300/40"
+                                        placeholder={`Acompañante ${index + 1}`}
+                                        value={guest}
+                                        onChange={(event) => updateGuest(index, event.target.value)}
+                                    />
+                                ))}
                             </div>
-                            <button type="button" className="w-full rounded-2xl bg-gradient-to-r from-slate-100 to-slate-300 px-4 py-3 font-semibold text-slate-950 transition hover:opacity-90">
-                                Confirmar registro
+                            <button
+                                type="submit"
+                                className="w-full rounded-2xl bg-gradient-to-r from-slate-100 to-slate-300 px-4 py-3 font-semibold text-slate-950 transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+                                disabled={submissionState.status === 'loading'}
+                            >
+                                {submissionState.status === 'loading' ? 'Registrando...' : 'Confirmar registro'}
                             </button>
                         </form>
+
+                        {submissionState.message ? (
+                            <div
+                                className={`rounded-[1.5rem] border p-4 text-sm ${
+                                    submissionState.status === 'success'
+                                        ? 'border-emerald-300/20 bg-emerald-300/10 text-emerald-100'
+                                        : submissionState.status === 'error'
+                                            ? 'border-rose-300/20 bg-rose-300/10 text-rose-100'
+                                            : 'border-cyan-300/20 bg-cyan-300/10 text-cyan-100'
+                                }`}
+                            >
+                                {submissionState.message}
+                            </div>
+                        ) : null}
+
+                        {hasRegistration ? (
+                            <div className="rounded-[1.5rem] border border-white/10 bg-slate-950/60 p-5">
+                                <p className="text-[11px] uppercase tracking-[0.35em] text-slate-400">Tu QR</p>
+                                <p className="mt-2 text-sm text-slate-300">
+                                    Guarda o descarga este código para mostrarlo en la entrada.
+                                </p>
+                                <div className="mt-4 overflow-hidden rounded-3xl border border-white/10 bg-white p-4">
+                                    <img
+                                        alt="Código QR de registro"
+                                        className="mx-auto h-64 w-64"
+                                        src={submissionState.registration.qr_image_url}
+                                    />
+                                </div>
+                                <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+                                    <a
+                                        className="inline-flex flex-1 items-center justify-center rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-medium text-white transition hover:bg-white/10"
+                                        href={submissionState.registration.qr_image_url}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                    >
+                                        Ver QR
+                                    </a>
+                                    <a
+                                        className="inline-flex flex-1 items-center justify-center rounded-2xl bg-gradient-to-r from-slate-100 to-slate-300 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:opacity-90"
+                                        href={submissionState.registration.qr_download_url}
+                                    >
+                                        Descargar QR
+                                    </a>
+                                </div>
+                                <p className="mt-4 text-xs uppercase tracking-[0.3em] text-slate-500">
+                                    Código: {submissionState.registration.qr_value}
+                                </p>
+                            </div>
+                        ) : null}
 
                         <div className="rounded-[1.5rem] border border-cyan-200/10 bg-cyan-300/5 p-5">
                             <p className="text-sm font-medium text-cyan-100">Siguiente paso</p>
