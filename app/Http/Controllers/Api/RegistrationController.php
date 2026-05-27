@@ -50,6 +50,8 @@ class RegistrationController extends Controller
         }
 
         $registration = DB::transaction(function () use ($event, $data, $guestCount, $totalPeople) {
+            $accessCode = $this->generateAccessCode();
+
             $registration = Registration::create([
                 'event_id' => $event->id,
                 'titular_name' => $data['titular_name'],
@@ -57,6 +59,7 @@ class RegistrationController extends Controller
                 'titular_phone' => $data['titular_phone'] ?? null,
                 'total_people' => $totalPeople,
                 'qr_code' => (string) Str::uuid(),
+                'access_code' => $accessCode,
                 'status' => 'confirmed',
             ]);
 
@@ -84,6 +87,7 @@ class RegistrationController extends Controller
             'data' => [
                 'registration' => $registration,
                 'qr_value' => $registration->qr_code,
+                'access_code' => $registration->access_code,
                 'qr_image_url' => route('registrations.qr', ['qrCode' => $registration->qr_code]),
                 'qr_download_url' => route('registrations.qr.download', ['qrCode' => $registration->qr_code]),
                 'available_seats' => max(0, $event->capacity - $event->registrations()->sum('total_people')),
@@ -98,7 +102,18 @@ class RegistrationController extends Controller
             ->firstOrFail();
 
         return response()->json([
-            'data' => $registration,
+            'data' => $this->formatRegistrationResponse($registration),
+        ]);
+    }
+
+    public function showByAccessCode(string $accessCode): JsonResponse
+    {
+        $registration = Registration::with(['event', 'people'])
+            ->where('access_code', $accessCode)
+            ->firstOrFail();
+
+        return response()->json([
+            'data' => $this->formatRegistrationResponse($registration),
         ]);
     }
 
@@ -203,5 +218,24 @@ class RegistrationController extends Controller
     private function findRegistrationByQrCode(string $qrCode): Registration
     {
         return Registration::where('qr_code', $qrCode)->firstOrFail();
+    }
+
+    private function generateAccessCode(): string
+    {
+        do {
+            $accessCode = strtoupper(Str::random(4)).'-'.strtoupper(Str::random(4));
+        } while (Registration::where('access_code', $accessCode)->exists());
+
+        return $accessCode;
+    }
+
+    private function formatRegistrationResponse(Registration $registration): array
+    {
+        return [
+            ...$registration->toArray(),
+            'qr_value' => $registration->qr_code,
+            'qr_image_url' => route('registrations.qr', ['qrCode' => $registration->qr_code]),
+            'qr_download_url' => route('registrations.qr.download', ['qrCode' => $registration->qr_code]),
+        ];
     }
 }

@@ -27,7 +27,8 @@ class RegistrationApiTest extends TestCase
             ->assertJsonStructure([
                 'message',
                 'data' => [
-                    'registration' => ['id', 'event_id', 'titular_name', 'qr_code', 'people'],
+                    'registration' => ['id', 'event_id', 'titular_name', 'qr_code', 'access_code', 'people'],
+                    'access_code',
                     'qr_value',
                     'qr_image_url',
                     'qr_download_url',
@@ -44,10 +45,22 @@ class RegistrationApiTest extends TestCase
         $this->assertDatabaseCount('registration_people', 3);
 
         $qrCode = $response->json('data.qr_value');
+        $accessCode = $response->json('data.access_code');
 
         $this->getJson('/api/registrations/'.$qrCode)
             ->assertOk()
             ->assertJsonPath('data.qr_code', $qrCode);
+
+        $this->getJson('/api/registrations/access/'.$accessCode)
+            ->assertOk()
+            ->assertJsonPath('data.access_code', $accessCode)
+            ->assertJsonPath('data.qr_value', $qrCode)
+            ->assertJsonStructure([
+                'data' => [
+                    'qr_image_url',
+                    'qr_download_url',
+                ],
+            ]);
 
         $this->get('/api/registrations/'.$qrCode.'/qr')
             ->assertOk()

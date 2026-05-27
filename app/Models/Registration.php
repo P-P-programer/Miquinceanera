@@ -16,6 +16,7 @@ class Registration extends Model
         'titular_phone',
         'total_people',
         'qr_code',
+        'access_code',
         'status',
     ];
 

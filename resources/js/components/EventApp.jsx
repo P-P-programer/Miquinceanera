@@ -1,7 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import ConfirmDialog from './ui/ConfirmDialog';
+import { NotificationProvider, useNotifications } from './ui/NotificationSystem';
 
 const eventDate = new Date('2026-07-04T19:00:00-05:00');
 const totalCapacity = 100;
+const storageKey = 'miquinceanera-registration';
 
 const statsSeed = {
     registeredGroups: 18,
@@ -25,19 +28,150 @@ function getCountdown(targetDate) {
     };
 }
 
+function buildGuestRows() {
+    return ['', '', '', ''];
+}
+
+function normalizeRegistration(payload) {
+    return payload?.data ?? payload;
+}
+
+async function downloadSvgAsPng(svgUrl, fileName) {
+    const response = await fetch(svgUrl, {
+        headers: {
+            Accept: 'image/svg+xml',
+        },
+    });
+
+    if (!response.ok) {
+        throw new Error('No pudimos generar la imagen del QR.');
+    }
+
+    const svgText = await response.text();
+    const svgBlob = new Blob([svgText], { type: 'image/svg+xml;charset=utf-8' });
+    const objectUrl = URL.createObjectURL(svgBlob);
+
+    try {
+        const image = new Image();
+        image.decoding = 'async';
+
+        const loaded = new Promise((resolve, reject) => {
+            image.onload = resolve;
+            image.onerror = reject;
+        });
+
+        image.src = objectUrl;
+        await loaded;
+
+        const size = Math.max(image.width, image.height, 320);
+        const canvas = document.createElement('canvas');
+        canvas.width = size;
+        canvas.height = size;
+
+        const context = canvas.getContext('2d');
+        if (!context) {
+            throw new Error('No pudimos preparar el lienzo de descarga.');
+        }
+
+        context.fillStyle = '#ffffff';
+        context.fillRect(0, 0, size, size);
+        context.drawImage(image, 0, 0, size, size);
+
+        const pngBlob = await new Promise((resolve, reject) => {
+            canvas.toBlob((blob) => {
+                if (!blob) {
+                    reject(new Error('No pudimos convertir el QR a PNG.'));
+                    return;
+                }
+
+                resolve(blob);
+            }, 'image/png');
+        });
+
+        const downloadUrl = URL.createObjectURL(pngBlob);
+        const anchor = document.createElement('a');
+        anchor.href = downloadUrl;
+        anchor.download = fileName;
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove();
+        URL.revokeObjectURL(downloadUrl);
+    } finally {
+        URL.revokeObjectURL(objectUrl);
+    }
+}
+
 export default function EventApp() {
+    return (
+        <NotificationProvider>
+            <EventAppContent />
+        </NotificationProvider>
+    );
+}
+
+function EventAppContent() {
     const [countdown, setCountdown] = useState(() => getCountdown(eventDate));
     const [formState, setFormState] = useState({
         titular_name: '',
         titular_email: '',
         titular_phone: '',
-        guests: ['', '', '', ''],
+        guests: buildGuestRows(),
     });
     const [submissionState, setSubmissionState] = useState({
         status: 'idle',
         message: '',
         registration: null,
     });
+    const [confirmOpen, setConfirmOpen] = useState(false);
+    const [restoringSession, setRestoringSession] = useState(true);
+    const [manualAccessOpen, setManualAccessOpen] = useState(false);
+    const [accessCodeInput, setAccessCodeInput] = useState('');
+    const { pushNotification } = useNotifications();
+
+    useEffect(() => {
+        const stored = window.localStorage.getItem(storageKey);
+
+        if (!stored) {
+            setRestoringSession(false);
+            return;
+        }
+
+        const restore = async () => {
+            try {
+                const parsed = JSON.parse(stored);
+
+                if (!parsed?.access_code) {
+                    window.localStorage.removeItem(storageKey);
+                    return;
+                }
+
+                const response = await fetch(`/api/registrations/access/${parsed.access_code}`, {
+                    headers: {
+                        Accept: 'application/json',
+                    },
+                });
+
+                if (!response.ok) {
+                    window.localStorage.removeItem(storageKey);
+                    return;
+                }
+
+                const payload = await response.json();
+
+                setSubmissionState({
+                    status: 'success',
+                    message: 'Ya tienes un registro activo. Puedes volver a ver los detalles con tu código.',
+                    registration: normalizeRegistration(payload),
+                });
+            } catch {
+                window.localStorage.removeItem(storageKey);
+            } finally {
+                setRestoringSession(false);
+            }
+        };
+
+        restore();
+    }, []);
 
     useEffect(() => {
         const timer = window.setInterval(() => {
@@ -79,8 +213,14 @@ export default function EventApp() {
         });
     }
 
-    async function handleSubmit(event) {
+    function openConfirmation(event) {
         event.preventDefault();
+
+        setConfirmOpen(true);
+    }
+
+    async function handleSubmit() {
+        setConfirmOpen(false);
 
         setSubmissionState({
             status: 'loading',
@@ -120,11 +260,90 @@ export default function EventApp() {
                 message: payload.message,
                 registration: payload.data,
             });
+
+            window.localStorage.setItem(storageKey, JSON.stringify({
+                access_code: payload.data.access_code,
+            }));
+
+            setFormState({
+                titular_name: '',
+                titular_email: '',
+                titular_phone: '',
+                guests: buildGuestRows(),
+            });
+
+            pushNotification({
+                variant: 'success',
+                title: 'Registro confirmado',
+                message: 'El QR quedó listo y ya se puede descargar o mostrar en el acceso.',
+            });
         } catch (error) {
             setSubmissionState({
                 status: 'error',
                 message: error instanceof Error ? error.message : 'Ocurrió un error inesperado.',
                 registration: null,
+            });
+
+            pushNotification({
+                variant: 'error',
+                title: 'No se pudo registrar',
+                message: error instanceof Error ? error.message : 'Ocurrió un error inesperado.',
+            });
+        }
+    }
+
+    async function handleAccessCodeSubmit(event) {
+        event.preventDefault();
+
+        const accessCode = accessCodeInput.trim();
+
+        if (!accessCode) {
+            pushNotification({
+                variant: 'warning',
+                title: 'Falta el código',
+                message: 'Escribe tu código de acceso para continuar.',
+            });
+
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/registrations/access/${accessCode}`, {
+                headers: {
+                    Accept: 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('No encontramos ese código. Revisa que esté bien escrito.');
+            }
+
+            const payload = await response.json();
+            const registration = normalizeRegistration(payload);
+
+            setSubmissionState({
+                status: 'success',
+                message: 'Acceso verificado. Ya puedes ver los detalles de la celebración.',
+                registration,
+            });
+
+            window.localStorage.setItem(storageKey, JSON.stringify({
+                access_code: registration.access_code,
+            }));
+
+            setAccessCodeInput('');
+            setManualAccessOpen(false);
+
+            pushNotification({
+                variant: 'success',
+                title: 'Acceso confirmado',
+                message: 'Ya cargamos tu registro y tus detalles.',
+            });
+        } catch (error) {
+            pushNotification({
+                variant: 'error',
+                title: 'Código inválido',
+                message: error instanceof Error ? error.message : 'No pudimos validar tu código.',
             });
         }
     }
@@ -236,7 +455,8 @@ export default function EventApp() {
                             </p>
                         </div>
 
-                        <form className="space-y-4" onSubmit={handleSubmit}>
+                        {!restoringSession && !hasRegistration ? (
+                            <form className="space-y-4" onSubmit={openConfirmation}>
                             <input
                                 className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition focus:border-cyan-300/40"
                                 placeholder="Nombre completo del titular"
@@ -275,7 +495,48 @@ export default function EventApp() {
                             >
                                 {submissionState.status === 'loading' ? 'Registrando...' : 'Confirmar registro'}
                             </button>
-                        </form>
+                            </form>
+                        ) : null}
+
+                        {!restoringSession && !hasRegistration ? (
+                            <div className="space-y-3 rounded-[1.5rem] border border-white/10 bg-white/5 p-4">
+                                <button
+                                    type="button"
+                                    className="w-full rounded-2xl border border-white/10 bg-slate-950/55 px-4 py-3 text-sm font-medium text-white transition hover:bg-white/10"
+                                    onClick={() => setManualAccessOpen((current) => !current)}
+                                >
+                                    Ya tengo mi código de acceso
+                                </button>
+
+                                {manualAccessOpen ? (
+                                    <form className="space-y-3" onSubmit={handleAccessCodeSubmit}>
+                                        <input
+                                            className="w-full rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition focus:border-cyan-300/40"
+                                            placeholder="Ej: K7M4-Q2P9"
+                                            value={accessCodeInput}
+                                            onChange={(event) => setAccessCodeInput(event.target.value.toUpperCase())}
+                                            autoComplete="off"
+                                        />
+                                        <button
+                                            type="submit"
+                                            className="w-full rounded-2xl bg-gradient-to-r from-slate-100 to-slate-300 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:opacity-90"
+                                        >
+                                            Validar código
+                                        </button>
+                                    </form>
+                                ) : null}
+                            </div>
+                        ) : null}
+
+                        <ConfirmDialog
+                            open={confirmOpen}
+                            title={`¿Estás seguro de registrar a ${formState.titular_name || 'este invitado'}?`}
+                            description={`Se registrará a ${formState.titular_name || 'esta persona'} y a sus acompañantes. Una vez confirmado, no podrás revertir la inscripción desde esta pantalla.`}
+                            confirmLabel="Sí, confirmar registro"
+                            cancelLabel="Cancelar"
+                            onConfirm={handleSubmit}
+                            onCancel={() => setConfirmOpen(false)}
+                        />
 
                         {submissionState.message ? (
                             <div
@@ -304,6 +565,12 @@ export default function EventApp() {
                                         src={submissionState.registration.qr_image_url}
                                     />
                                 </div>
+                                <div className="mt-4 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-200">
+                                    <p className="text-[11px] uppercase tracking-[0.3em] text-slate-400">Código de acceso</p>
+                                    <p className="mt-1 text-base font-semibold tracking-[0.2em] text-white">
+                                        {submissionState.registration.access_code}
+                                    </p>
+                                </div>
                                 <div className="mt-4 flex flex-col gap-3 sm:flex-row">
                                     <a
                                         className="inline-flex flex-1 items-center justify-center rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-medium text-white transition hover:bg-white/10"
@@ -316,13 +583,51 @@ export default function EventApp() {
                                     <a
                                         className="inline-flex flex-1 items-center justify-center rounded-2xl bg-gradient-to-r from-slate-100 to-slate-300 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:opacity-90"
                                         href={submissionState.registration.qr_download_url}
+                                        download
                                     >
-                                        Descargar QR
+                                        Descargar SVG
                                     </a>
+                                    <button
+                                        type="button"
+                                        className="inline-flex flex-1 items-center justify-center rounded-2xl bg-cyan-300/15 px-4 py-3 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-300/20"
+                                        onClick={async () => {
+                                            try {
+                                                await downloadSvgAsPng(
+                                                    submissionState.registration.qr_image_url,
+                                                    `qr-${submissionState.registration.access_code}.png`,
+                                                );
+
+                                                pushNotification({
+                                                    variant: 'success',
+                                                    title: 'PNG listo',
+                                                    message: 'El QR se descargó como PNG correctamente.',
+                                                });
+                                            } catch (error) {
+                                                pushNotification({
+                                                    variant: 'error',
+                                                    title: 'No se pudo descargar',
+                                                    message: error instanceof Error ? error.message : 'Ocurrió un error al generar el PNG.',
+                                                });
+                                            }
+                                        }}
+                                    >
+                                        Descargar PNG
+                                    </button>
                                 </div>
-                                <p className="mt-4 text-xs uppercase tracking-[0.3em] text-slate-500">
-                                    Código: {submissionState.registration.qr_value}
-                                </p>
+                                <button
+                                    type="button"
+                                    className="mt-4 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-medium text-white transition hover:bg-white/10"
+                                    onClick={() => {
+                                        window.localStorage.removeItem(storageKey);
+                                        setSubmissionState({
+                                            status: 'idle',
+                                            message: '',
+                                            registration: null,
+                                        });
+                                    }}
+                                >
+                                    Cerrar sesión local
+                                </button>
                             </div>
                         ) : null}
 
