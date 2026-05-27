@@ -151,8 +151,8 @@
                                             <th class="px-4 py-3">Estado</th>
                                             <th class="px-4 py-3">Titular y acompañantes</th>
                                             <th class="px-4 py-3">Código humano</th>
-                                            <th class="px-4 py-3">Fecha de registro</th>
-                                            <th class="px-4 py-3">Asistencia</th>
+                                            <th class="admin-hide-mobile px-4 py-3">Fecha de registro</th>
+                                            <th class="admin-hide-mobile px-4 py-3">Asistencia</th>
                                             <th class="px-4 py-3">Acciones</th>
                                         </tr>
                                     </thead>
@@ -180,8 +180,8 @@
                                                         <button type="button" class="copy-access-code rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-white transition hover:bg-white/10" data-access-code="{{ $registration['access_code'] }}">Copiar código</button>
                                                     </div>
                                                 </td>
-                                                <td class="px-4 py-4 text-slate-300">{{ $registration['created_at'] }}</td>
-                                                <td class="px-4 py-4">
+                                                <td class="admin-hide-mobile px-4 py-4 text-slate-300">{{ $registration['created_at'] }}</td>
+                                                <td class="admin-hide-mobile px-4 py-4">
                                                     <div class="space-y-2">
                                                         <p class="text-sm text-slate-300">Personas: {{ $registration['total_people'] }}</p>
                                                         <p class="text-sm text-slate-400">Escaneos: {{ $registration['attendance_logs_count'] }}</p>
@@ -241,6 +241,8 @@
                 </section>
             </div>
         </div>
+
+        <div id="admin-toast-stack" class="admin-toast-stack pointer-events-none"></div>
 
         <div id="attendance-confirm-backdrop" class="admin-modal-backdrop hidden" aria-hidden="true">
             <div class="admin-modal-panel p-6 sm:p-8" role="dialog" aria-modal="true" aria-labelledby="attendance-confirm-title">

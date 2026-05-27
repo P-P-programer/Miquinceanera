@@ -32,6 +32,7 @@ const attendanceConfirmStatus = document.getElementById('attendance-confirm-stat
 const attendanceConfirmAccessCode = document.getElementById('attendance-confirm-access-code');
 const attendanceConfirmCount = document.getElementById('attendance-confirm-count');
 const attendanceConfirmMembers = document.getElementById('attendance-confirm-members');
+const toastStack = document.getElementById('admin-toast-stack');
 
 let qrScanner = null;
 let qrScanActive = false;
@@ -49,6 +50,61 @@ function escapeHtml(value) {
 
 function normalize(value) {
     return String(value || '').toLowerCase();
+}
+
+function pushToast({ variant = 'info', title = '', message = '', timeout = 2800 }) {
+    if (!toastStack) {
+        return;
+    }
+
+    const toast = document.createElement('article');
+    toast.className = 'admin-toast pointer-events-auto';
+    toast.dataset.variant = variant;
+    toast.innerHTML = `
+        <div class="flex items-start justify-between gap-3">
+            <div>
+                ${title ? `<p class="text-sm font-semibold text-white">${escapeHtml(title)}</p>` : ''}
+                <p class="mt-1 text-sm leading-6 text-slate-200">${escapeHtml(message)}</p>
+            </div>
+            <button type="button" class="rounded-full border border-white/10 bg-white/5 px-2 py-1 text-xs text-slate-200 transition hover:bg-white/10" aria-label="Cerrar notificación">Cerrar</button>
+        </div>
+    `;
+
+    const closeButton = toast.querySelector('button');
+    const removeToast = () => toast.remove();
+
+    closeButton?.addEventListener('click', removeToast);
+    toastStack.appendChild(toast);
+
+    if (timeout !== 0) {
+        window.setTimeout(removeToast, timeout);
+    }
+}
+
+function scrollToResultOnSmallScreens(target) {
+    if (!window.matchMedia('(max-width: 767px)').matches) {
+        return;
+    }
+
+    window.setTimeout(() => {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 50);
+}
+
+function findTableRowForRegistration(registration) {
+    if (!tableBody) return null;
+
+    const needle = normalize(registration.access_code || registration.qr_code || registration.titular_name || '');
+
+    for (const row of Array.from(tableBody.querySelectorAll('tr[data-search]'))) {
+        const rowSearch = normalize(row.dataset.search || '');
+
+        if (needle && rowSearch.includes(needle)) {
+            return row;
+        }
+    }
+
+    return null;
 }
 
 function renderLookup(registration) {
@@ -71,6 +127,10 @@ function renderLookup(registration) {
                 <p class="mt-1 text-lg font-semibold tracking-[0.2em] text-white">${escapeHtml(registration.access_code)}</p>
                 <p class="mt-3 text-sm text-slate-400">Acompañantes:</p>
                 <ul class="mt-2 space-y-1">${companions || '<li class="text-slate-500">Sin acompañantes</li>'}</ul>
+            </div>
+            <div class="flex flex-col gap-3 sm:flex-row">
+                <button type="button" class="lookup-mark-attendance rounded-2xl bg-gradient-to-r from-cyan-300 to-sky-400 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:opacity-95" data-qr-code="${escapeHtml(registration.qr_code)}">Marcar asistencia con este código</button>
+                <button type="button" class="lookup-copy-code rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-medium text-white transition hover:bg-white/10" data-access-code="${escapeHtml(registration.access_code)}">Copiar código humano</button>
             </div>
         </div>
     `;
@@ -162,6 +222,50 @@ async function loadRegistrationPreview(qrCode) {
     loadedRegistration = await fetchRegistrationByQr(qrCode);
     renderScanPreview(loadedRegistration);
     scanResult.textContent = 'Token validado. Revisa los integrantes y luego marca asistencia.';
+    pushToast({
+        variant: 'success',
+        title: 'Registro encontrado',
+        message: `Encontramos a ${loadedRegistration.titular_name}.`,
+    });
+    const row = findTableRowForRegistration(loadedRegistration);
+    if (row) {
+        row.classList.add('admin-row-highlight');
+        scrollToResultOnSmallScreens(row);
+        window.setTimeout(() => row.classList.remove('admin-row-highlight'), 3000);
+    } else {
+        scrollToResultOnSmallScreens(scanPreview);
+    }
+}
+
+async function runAttendanceFlow(registration, qrCode) {
+    loadedRegistration = registration;
+    qrCodeInput.value = qrCode;
+    renderScanPreview(registration);
+
+    const confirmed = await openAttendanceConfirmModal(registration);
+
+    if (!confirmed) {
+        scanResult.textContent = 'Marcar asistencia cancelado por el usuario.';
+        return;
+    }
+
+    scanResult.textContent = 'Validando QR...';
+
+    try {
+        const payload = await submitQrScan(qrCode);
+        const message = payload.data?.already_scanned
+            ? `${payload.message} ${loadedRegistration.titular_name} ya estaba validado; no se registró de nuevo.`
+            : `${payload.message} ${loadedRegistration.titular_name} quedó marcado con asistencia. El cupo no se modifica.`;
+
+        scanResult.textContent = message;
+        pushToast({
+            variant: payload.data?.already_scanned ? 'info' : 'success',
+            title: payload.data?.already_scanned ? 'Ya validado' : 'Asistencia marcada',
+            message: loadedRegistration.titular_name,
+        });
+    } catch (error) {
+        scanResult.textContent = error instanceof Error ? error.message : 'No se pudo validar el QR.';
+    }
 }
 
 function renderAttendanceConfirmModal(registration) {
@@ -314,23 +418,7 @@ function bindEvents() {
             }
         }
 
-        const confirmed = await openAttendanceConfirmModal(loadedRegistration);
-
-        if (!confirmed) {
-            scanResult.textContent = 'Marcar asistencia cancelado por el usuario.';
-            return;
-        }
-
-        scanResult.textContent = 'Validando QR...';
-
-        try {
-            const payload = await submitQrScan(qrCode);
-            scanResult.textContent = payload.data?.already_scanned
-                ? `${payload.message} ${loadedRegistration.titular_name} ya estaba validado; no se registró de nuevo.`
-                : `${payload.message} ${loadedRegistration.titular_name} quedó marcado con asistencia. El cupo no se modifica.`;
-        } catch (error) {
-            scanResult.textContent = error instanceof Error ? error.message : 'No se pudo validar el QR.';
-        }
+        await runAttendanceFlow(loadedRegistration, qrCode);
     });
 
     qrStart.addEventListener('click', startQrCamera);
@@ -375,9 +463,55 @@ function bindEvents() {
             }
 
             renderLookup(payload.data);
+            loadedRegistration = payload.data;
+            pushToast({
+                variant: 'success',
+                title: 'Registro encontrado',
+                message: `Encontramos a ${payload.data.titular_name}.`,
+            });
+            const row = findTableRowForRegistration(payload.data);
+            if (row) {
+                row.classList.add('admin-row-highlight');
+                scrollToResultOnSmallScreens(row);
+                window.setTimeout(() => row.classList.remove('admin-row-highlight'), 3000);
+            } else {
+                scrollToResultOnSmallScreens(lookupResult);
+            }
         } catch (error) {
             lookupResult.textContent = error instanceof Error ? error.message : 'No pudimos validar ese código.';
         }
+    });
+
+    lookupResult.addEventListener('click', async (event) => {
+        const copyButton = event.target.closest('.lookup-copy-code');
+
+        if (copyButton) {
+            const accessCode = copyButton.dataset.accessCode || '';
+
+            try {
+                await navigator.clipboard.writeText(accessCode);
+                scanResult.textContent = `Código ${accessCode} copiado al portapapeles.`;
+            } catch {
+                scanResult.textContent = `No pudimos copiar el código ${accessCode}.`;
+            }
+
+            return;
+        }
+
+        const attendanceButton = event.target.closest('.lookup-mark-attendance');
+
+        if (!attendanceButton) {
+            return;
+        }
+
+        const qrCode = attendanceButton.dataset.qrCode || '';
+
+        if (!loadedRegistration || !qrCode) {
+            lookupResult.textContent = 'No pudimos preparar el registro para asistencia.';
+            return;
+        }
+
+        await runAttendanceFlow(loadedRegistration, qrCode);
     });
 
     registrationSearch.addEventListener('input', updateTableFilter);
