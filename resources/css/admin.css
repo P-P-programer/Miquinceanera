@@ -1,0 +1,117 @@
+@layer components {
+    .admin-page {
+        min-height: 100vh;
+        background: #020617;
+        color: #e2e8f0;
+    }
+
+    .admin-shell {
+        width: min(100%, 80rem);
+        margin: 0 auto;
+    }
+
+    .admin-panel {
+        border: 1px solid rgb(255 255 255 / 0.1);
+        background: rgb(255 255 255 / 0.05);
+        backdrop-filter: blur(24px);
+        border-radius: 2rem;
+    }
+
+    .admin-card {
+        border: 1px solid rgb(255 255 255 / 0.1);
+        background: rgb(255 255 255 / 0.05);
+        border-radius: 1.5rem;
+    }
+
+    .admin-table-wrap {
+        overflow-x: auto;
+        border-radius: 1.5rem;
+        border: 1px solid rgb(255 255 255 / 0.1);
+    }
+
+    .admin-video-shell {
+        overflow: hidden;
+        border-radius: 1.5rem;
+        border: 1px solid rgb(255 255 255 / 0.1);
+        background: rgb(2 6 23 / 0.7);
+    }
+
+    .admin-video {
+        aspect-ratio: 1;
+        width: 100%;
+        object-fit: cover;
+        background: #000;
+    }
+
+    .admin-modal-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 50;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1.5rem;
+        background: rgb(2 6 23 / 0.8);
+        backdrop-filter: blur(18px);
+    }
+
+    .admin-modal-panel {
+        width: min(100%, 34rem);
+        border: 1px solid rgb(255 255 255 / 0.12);
+        background: linear-gradient(180deg, rgb(15 23 42 / 0.98), rgb(2 6 23 / 0.98));
+        box-shadow: 0 30px 90px rgb(0 0 0 / 0.45);
+        border-radius: 2rem;
+    }
+
+    .admin-modal-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        border-radius: 9999px;
+        border: 1px solid rgb(103 232 249 / 0.18);
+        background: rgb(103 232 249 / 0.1);
+        color: rgb(207 250 254);
+        padding: 0.4rem 0.8rem;
+        font-size: 0.7rem;
+        font-weight: 600;
+        letter-spacing: 0.26em;
+        text-transform: uppercase;
+    }
+
+    .admin-modal-member-list {
+        display: grid;
+        gap: 0.5rem;
+    }
+
+    .admin-modal-member-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        border-radius: 1rem;
+        border: 1px solid rgb(255 255 255 / 0.08);
+        background: rgb(255 255 255 / 0.04);
+        padding: 0.8rem 1rem;
+    }
+
+    .admin-responsive-grid {
+        display: grid;
+        gap: 1.5rem;
+    }
+
+    @media (min-width: 1280px) {
+        .admin-responsive-grid {
+            grid-template-columns: 0.95fr 1.05fr;
+        }
+    }
+
+    @media (max-width: 767px) {
+        .admin-mobile-stack {
+            flex-direction: column;
+        }
+
+        .admin-hide-mobile {
+            display: none;
+        }
+    }
+}

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\RegistrationController as AdminRegistrationController;
 use App\Http\Middleware\AdminOnly;
 use Illuminate\Support\Facades\Route;
 
@@ -26,4 +27,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])
         ->middleware(['auth', AdminOnly::class])
         ->name('dashboard');
+
+    Route::post('/registrations/{registration}/cancel', [AdminRegistrationController::class, 'cancel'])
+        ->middleware(['auth', AdminOnly::class])
+        ->name('registrations.cancel');
 });
