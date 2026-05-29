@@ -56,11 +56,11 @@
                         </div>
 
                         <div class="grid grid-cols-2 gap-3 rounded-[1.5rem] border border-white/10 bg-slate-950/60 p-3 text-sm">
-                            <label class="flex cursor-pointer items-center justify-center gap-2 rounded-2xl px-4 py-3 transition" data-scan-mode="qr">
+                            <label class="admin-chip-button flex cursor-pointer items-center justify-center gap-2 rounded-2xl px-4 py-3 transition" data-scan-mode="qr">
                                 <input type="radio" name="scan-mode" value="qr" checked class="accent-cyan-300">
                                 <span>Escanear QR</span>
                             </label>
-                            <label class="flex cursor-pointer items-center justify-center gap-2 rounded-2xl px-4 py-3 transition" data-scan-mode="human">
+                            <label class="admin-chip-button flex cursor-pointer items-center justify-center gap-2 rounded-2xl px-4 py-3 transition" data-scan-mode="human">
                                 <input type="radio" name="scan-mode" value="human" class="accent-cyan-300">
                                 <span>Código humano</span>
                             </label>
@@ -71,8 +71,8 @@
                                 <video id="qr-video" class="admin-video" playsinline muted></video>
                             </div>
                             <div class="grid gap-3 sm:grid-cols-2">
-                                <button id="qr-start" type="button" class="rounded-2xl bg-gradient-to-r from-slate-100 to-slate-300 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:opacity-90">Activar cámara</button>
-                                <button id="qr-stop" type="button" class="rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-sm font-medium text-white transition hover:bg-white/10">Detener cámara</button>
+                                <button id="qr-start" type="button" class="admin-chip-button rounded-2xl bg-gradient-to-r from-slate-100 to-slate-300 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:opacity-90">Activar cámara</button>
+                                <button id="qr-stop" type="button" class="admin-chip-button rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-sm font-medium text-white transition hover:bg-white/10">Detener cámara</button>
                             </div>
                             <p class="text-xs uppercase tracking-[0.3em] text-slate-500">La cámara pide permiso al dispositivo cuando la activas.</p>
                         </div>
@@ -84,7 +84,7 @@
                             </div>
                             <form id="human-code-form" class="space-y-3">
                                 <input id="human-code-input" class="w-full rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-sm text-white outline-none transition focus:border-cyan-300/40" placeholder="Ej: K7M4-Q2P9" autocomplete="off">
-                                <button type="submit" class="w-full rounded-2xl bg-cyan-300/15 px-4 py-3 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-300/20">Buscar registro</button>
+                                <button type="submit" class="admin-chip-button w-full rounded-2xl bg-cyan-300/15 px-4 py-3 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-300/20">Buscar registro</button>
                             </form>
                         </div>
 
@@ -94,7 +94,7 @@
                                 <input id="scanned-by" class="w-full rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-sm text-white outline-none transition focus:border-cyan-300/40" placeholder="Validado por (opcional)" autocomplete="off">
                                 <input id="scan-note" class="w-full rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-sm text-white outline-none transition focus:border-cyan-300/40" placeholder="Nota (opcional)" autocomplete="off">
                             </div>
-                            <button type="submit" class="w-full rounded-2xl bg-gradient-to-r from-slate-100 to-slate-300 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:opacity-90">Marcar asistencia</button>
+                            <button type="submit" class="admin-chip-button w-full rounded-2xl bg-gradient-to-r from-slate-100 to-slate-300 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:opacity-90">Marcar asistencia</button>
                         </form>
 
                         <div id="scan-preview" class="rounded-[1.5rem] border border-white/10 bg-slate-950/60 p-4 text-sm text-slate-300">Escanea un QR para ver el titular e integrantes antes de marcar asistencia.</div>
@@ -188,16 +188,16 @@
                                                     </div>
                                                 </td>
                                                 <td class="px-4 py-4">
-                                                    <div class="flex flex-col gap-2">
-                                                        <a class="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-center text-xs font-medium text-white transition hover:bg-white/10" href="{{ $registration['qr_image_url'] }}" target="_blank" rel="noreferrer">Ver QR</a>
-                                                        <a class="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-center text-xs font-medium text-white transition hover:bg-white/10" href="{{ $registration['qr_download_url'] }}">Descargar QR</a>
+                                                    <div class="flex flex-wrap gap-2">
+                                                        <a class="admin-action-button" href="{{ $registration['qr_image_url'] }}" target="_blank" rel="noreferrer">Ver QR</a>
+                                                        <a class="admin-action-button" href="{{ $registration['qr_download_url'] }}">Descargar QR</a>
                                                         @if ($registration['status'] !== 'cancelled')
-                                                            <form method="POST" action="{{ route('admin.registrations.cancel', $registration['id']) }}" class="cancel-registration-form" data-confirm-message="¿Cancelar el registro de {{ $registration['titular_name'] }}? Esta acción no se puede deshacer, pero liberará el cupo y conservará el historial.">
+                                                            <form method="POST" action="{{ route('admin.registrations.cancel', $registration['id']) }}" class="cancel-registration-form w-full" data-confirm-message="¿Cancelar el registro de {{ $registration['titular_name'] }}? Esta acción no se puede deshacer, pero liberará el cupo y conservará el historial.">
                                                                 @csrf
-                                                                <button type="submit" class="w-full rounded-full border border-rose-300/20 bg-rose-300/10 px-3 py-1 text-center text-xs font-medium text-rose-100 transition hover:bg-rose-300/20">Cancelar registro</button>
+                                                                <button type="submit" class="admin-action-button w-full border border-rose-300/20 bg-rose-300/10 text-rose-100 transition hover:bg-rose-300/20">Cancelar registro</button>
                                                             </form>
                                                         @else
-                                                            <span class="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-center text-xs font-medium text-slate-400">Cancelado</span>
+                                                            <span class="admin-action-button w-full border border-white/10 bg-white/5 text-slate-400">Cancelado</span>
                                                         @endif
                                                     </div>
                                                 </td>
@@ -286,6 +286,29 @@
                 <div class="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-end">
                     <button id="attendance-confirm-cancel" type="button" class="rounded-2xl border border-white/10 bg-white/5 px-5 py-3 text-sm font-medium text-white transition hover:bg-white/10">Volver</button>
                     <button id="attendance-confirm-submit" type="button" class="rounded-2xl bg-gradient-to-r from-cyan-300 to-sky-400 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:opacity-95">Sí, marcar asistencia</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="cancel-confirm-backdrop" class="admin-modal-backdrop hidden" aria-hidden="true">
+            <div class="admin-modal-panel admin-cancel-panel p-6 sm:p-8" role="dialog" aria-modal="true" aria-labelledby="cancel-confirm-title">
+                <div class="flex items-start justify-between gap-4">
+                    <div>
+                        <span class="admin-modal-pill admin-cancel-pill">Cancelar registro</span>
+                        <h2 id="cancel-confirm-title" class="mt-4 text-3xl font-semibold text-white">¿Seguro que deseas continuar?</h2>
+                        <p class="mt-3 text-sm leading-6 text-slate-300">Esta acción conserva el historial, pero libera el cupo y cambia el estado del registro.</p>
+                    </div>
+                    <button id="cancel-confirm-close" type="button" class="rounded-full border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-300 transition hover:bg-white/10">Cerrar</button>
+                </div>
+
+                <div class="mt-6 rounded-[1.5rem] border border-rose-300/20 bg-rose-300/10 p-5">
+                    <p class="text-xs uppercase tracking-[0.35em] text-rose-100/80">Atención</p>
+                    <p id="cancel-confirm-message" class="mt-3 text-sm leading-6 text-rose-50">—</p>
+                </div>
+
+                <div class="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-end">
+                    <button id="cancel-confirm-back" type="button" class="rounded-2xl border border-white/10 bg-white/5 px-5 py-3 text-sm font-medium text-white transition hover:bg-white/10">Volver</button>
+                    <button id="cancel-confirm-submit" type="button" class="rounded-2xl bg-gradient-to-r from-rose-300 to-rose-500 px-5 py-3 text-sm font-semibold text-rose-950 transition hover:opacity-95">Sí, cancelar registro</button>
                 </div>
             </div>
         </div>

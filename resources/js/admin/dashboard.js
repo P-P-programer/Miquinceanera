@@ -33,11 +33,17 @@ const attendanceConfirmAccessCode = document.getElementById('attendance-confirm-
 const attendanceConfirmCount = document.getElementById('attendance-confirm-count');
 const attendanceConfirmMembers = document.getElementById('attendance-confirm-members');
 const toastStack = document.getElementById('admin-toast-stack');
+const cancelConfirmBackdrop = document.getElementById('cancel-confirm-backdrop');
+const cancelConfirmClose = document.getElementById('cancel-confirm-close');
+const cancelConfirmBack = document.getElementById('cancel-confirm-back') || document.getElementById('cancel-confirm-close');
+const cancelConfirmSubmit = document.getElementById('cancel-confirm-submit');
+const cancelConfirmMessage = document.getElementById('cancel-confirm-message');
 
 let qrScanner = null;
 let qrScanActive = false;
 let loadedRegistration = null;
 let attendanceConfirmResolve = null;
+let pendingCancelForm = null;
 
 function escapeHtml(value) {
     return String(value)
@@ -309,6 +315,26 @@ function openAttendanceConfirmModal(registration) {
     });
 }
 
+function renderCancelConfirmModal(form) {
+    const message = form.dataset.confirmMessage || '¿Seguro que deseas cancelar este registro?';
+    if (cancelConfirmMessage) {
+        cancelConfirmMessage.textContent = message;
+    }
+}
+
+function closeCancelConfirmModal() {
+    cancelConfirmBackdrop.classList.add('hidden');
+    cancelConfirmBackdrop.setAttribute('aria-hidden', 'true');
+    pendingCancelForm = null;
+}
+
+function openCancelConfirmModal(form) {
+    pendingCancelForm = form;
+    renderCancelConfirmModal(form);
+    cancelConfirmBackdrop.classList.remove('hidden');
+    cancelConfirmBackdrop.setAttribute('aria-hidden', 'false');
+}
+
 async function handleDetectedCode(detectedValue) {
     if (!qrScanActive) {
         return;
@@ -532,11 +558,8 @@ function bindEvents() {
 
     cancelForms.forEach((form) => {
         form.addEventListener('submit', (event) => {
-            const confirmMessage = form.dataset.confirmMessage || '¿Seguro que deseas cancelar este registro?';
-
-            if (!window.confirm(confirmMessage)) {
-                event.preventDefault();
-            }
+            event.preventDefault();
+            openCancelConfirmModal(form);
         });
     });
 
@@ -558,9 +581,27 @@ function bindEvents() {
         }
     });
 
+    cancelConfirmClose.addEventListener('click', closeCancelConfirmModal);
+    cancelConfirmBack.addEventListener('click', closeCancelConfirmModal);
+    cancelConfirmSubmit.addEventListener('click', () => {
+        if (pendingCancelForm) {
+            pendingCancelForm.submit();
+        }
+
+        closeCancelConfirmModal();
+    });
+
+    cancelConfirmBackdrop.addEventListener('click', (event) => {
+        if (event.target === cancelConfirmBackdrop) {
+            closeCancelConfirmModal();
+        }
+    });
+
     document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape' && !attendanceConfirmBackdrop.classList.contains('hidden')) {
             closeAttendanceConfirmModal();
+        } else if (event.key === 'Escape' && !cancelConfirmBackdrop.classList.contains('hidden')) {
+            closeCancelConfirmModal();
         }
     });
 

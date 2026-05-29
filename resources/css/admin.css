@@ -97,6 +97,26 @@
         background: rgb(127 29 29 / 0.3);
     }
 
+    .admin-action-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        border-radius: 0.9rem;
+        line-height: 1.15;
+        padding: 0.55rem 0.8rem;
+        font-size: 0.72rem;
+        font-weight: 600;
+        text-align: center;
+        white-space: nowrap;
+        min-width: fit-content;
+    }
+
+    .admin-action-button:focus-visible {
+        outline: 2px solid rgb(103 232 249 / 0.7);
+        outline-offset: 2px;
+    }
+
     .admin-row-highlight {
         animation: admin-highlight 3s ease-in-out;
         box-shadow: 0 6px 30px rgb(14 165 233 / 0.12) inset, 0 6px 30px rgb(14 165 233 / 0.06);
@@ -142,6 +162,21 @@
         font-weight: 600;
         letter-spacing: 0.26em;
         text-transform: uppercase;
+    }
+
+    .admin-cancel-panel {
+        border-color: rgb(251 113 133 / 0.22);
+        background: linear-gradient(180deg, rgb(39 10 16 / 0.98), rgb(17 24 39 / 0.98));
+    }
+
+    .admin-cancel-pill {
+        border-color: rgb(251 113 133 / 0.22);
+        background: rgb(251 113 133 / 0.12);
+        color: rgb(255 228 230);
+    }
+
+    .admin-cancel-panel .text-slate-300 {
+        color: rgb(226 232 240 / 0.88);
     }
 
     .admin-modal-member-list {
@@ -199,6 +234,14 @@
             padding: 1rem !important;
         }
 
+        .admin-action-button {
+            min-height: 2.5rem;
+            padding-top: 0.6rem;
+            padding-bottom: 0.6rem;
+            white-space: normal;
+            width: auto;
+        }
+
         .admin-video-shell {
             height: 220px;
         }
@@ -243,6 +286,10 @@
 
         .admin-panel .grid, .admin-panel .grid-cols-2 {
             grid-template-columns: 1fr !important;
+        }
+
+        .admin-table-wrap .flex-wrap {
+            gap: 0.4rem;
         }
     }
 }
