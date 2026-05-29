@@ -42,14 +42,18 @@ class RegistrationController extends Controller
             ]);
         }
 
-        $registeredPeople = (int) $event->registrations()->sum('total_people');
-        if ($registeredPeople + $totalPeople > $event->capacity) {
-            throw ValidationException::withMessages([
-                'capacity' => 'No hay cupo suficiente para este registro.',
-            ]);
-        }
+        $registration = DB::transaction(function () use ($event, $data, $totalPeople) {
+            $lockedEvent = Event::query()->whereKey($event->id)->lockForUpdate()->firstOrFail();
+            $confirmedPeople = (int) $lockedEvent->registrations()
+                ->where('status', 'confirmed')
+                ->sum('total_people');
 
-        $registration = DB::transaction(function () use ($event, $data, $guestCount, $totalPeople) {
+            if ($confirmedPeople + $totalPeople > $lockedEvent->capacity) {
+                throw ValidationException::withMessages([
+                    'capacity' => 'No hay cupo suficiente para este registro.',
+                ]);
+            }
+
             $accessCode = $this->generateAccessCode();
 
             $registration = Registration::create([
@@ -82,6 +86,12 @@ class RegistrationController extends Controller
             return $registration->load(['event', 'people']);
         });
 
+        $confirmedPeople = (int) Registration::query()
+            ->where('event_id', $event->id)
+            ->where('status', 'confirmed')
+            ->sum('total_people');
+        $remainingSeats = max(0, $event->capacity - $confirmedPeople);
+
         return response()->json([
             'message' => 'Registro creado correctamente.',
             'data' => [
@@ -90,7 +100,8 @@ class RegistrationController extends Controller
                 'access_code' => $registration->access_code,
                 'qr_image_url' => route('registrations.qr', ['qrCode' => $registration->qr_code]),
                 'qr_download_url' => route('registrations.qr.download', ['qrCode' => $registration->qr_code]),
-                'available_seats' => max(0, $event->capacity - $event->registrations()->sum('total_people')),
+                'available_seats' => $remainingSeats,
+                'registration_open' => $remainingSeats > 0,
             ],
         ], 201);
     }
@@ -198,13 +209,15 @@ class RegistrationController extends Controller
             ->where('event_id', $event->id)
             ->whereHas('attendanceLogs')
             ->sum('total_people');
+        $availableSeats = max(0, (int) $event->capacity - $confirmedGuests);
 
         return response()->json([
             'data' => [
                 'event_title' => $event->title,
                 'event_starts_at' => $event->starts_at?->toIso8601String(),
                 'total_capacity' => (int) $event->capacity,
-                'available_seats' => max(0, (int) $event->capacity - $confirmedGuests),
+                'available_seats' => $availableSeats,
+                'registration_open' => $availableSeats > 0,
                 'registered_groups' => $registeredGroups,
                 'confirmed_groups' => (int) (clone $confirmedRegistrations)->count(),
                 'confirmed_guests' => $confirmedGuests,

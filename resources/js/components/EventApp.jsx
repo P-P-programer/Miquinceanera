@@ -16,6 +16,7 @@ const initialStats = {
     confirmedGuests: 0,
     attendedGroups: 0,
     attendedGuests: 0,
+    registrationOpen: true,
 };
 
 function formatNumber(value) {
@@ -217,6 +218,7 @@ function EventAppContent() {
                     confirmedGuests: Number(data.confirmed_guests ?? initialStats.confirmedGuests),
                     attendedGroups: Number(data.attended_groups ?? initialStats.attendedGroups),
                     attendedGuests: Number(data.attended_guests ?? initialStats.attendedGuests),
+                    registrationOpen: Boolean(data.registration_open ?? initialStats.registrationOpen),
                 });
             } catch {
                 // Keep the initial values if the stats endpoint is unavailable.
@@ -231,7 +233,7 @@ function EventAppContent() {
     const metrics = [
         { label: 'Cupos restantes', value: eventStats.availableSeats },
         { label: 'Grupos registrados', value: eventStats.registeredGroups },
-        { label: 'Invitados confirmados', value: eventStats.confirmedGuests },
+        { label: 'Grupos confirmados', value: eventStats.confirmedGroups },
     ];
 
     const hasRegistration = submissionState.registration !== null;
@@ -257,6 +259,16 @@ function EventAppContent() {
 
     function openConfirmation(event) {
         event.preventDefault();
+
+        if (!eventStats.registrationOpen) {
+            pushNotification({
+                variant: 'warning',
+                title: 'Registro cerrado',
+                message: 'Ya no quedan cupos disponibles para nuevas inscripciones.',
+            });
+
+            return;
+        }
 
         setConfirmOpen(true);
     }
@@ -460,9 +472,9 @@ function EventAppContent() {
                                             <p className="text-3xl font-semibold text-white">{eventStats.availableSeats}</p>
                                             <p className="text-sm text-slate-400">cupos disponibles de {eventStats.totalCapacity}</p>
                                         </div>
-                                        <span className="rounded-full border border-emerald-300/20 bg-emerald-300/10 px-3 py-1 text-xs font-medium text-emerald-200">
-                                            Registro abierto
-                                        </span>
+                                                <span className={`rounded-full px-3 py-1 text-xs font-medium ${eventStats.registrationOpen ? 'border border-emerald-300/20 bg-emerald-300/10 text-emerald-200' : 'border border-rose-300/20 bg-rose-300/10 text-rose-200'}`}>
+                                                    {eventStats.registrationOpen ? 'Registro abierto' : 'Registro cerrado'}
+                                                </span>
                                     </div>
                                     <div className="mt-5 h-2 overflow-hidden rounded-full bg-white/10">
                                         <div
@@ -533,9 +545,9 @@ function EventAppContent() {
                             <button
                                 type="submit"
                                 className="w-full rounded-2xl bg-gradient-to-r from-slate-100 to-slate-300 px-4 py-3 font-semibold text-slate-950 transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
-                                disabled={submissionState.status === 'loading'}
+                                disabled={submissionState.status === 'loading' || !eventStats.registrationOpen}
                             >
-                                {submissionState.status === 'loading' ? 'Registrando...' : 'Confirmar registro'}
+                                {submissionState.status === 'loading' ? 'Registrando...' : eventStats.registrationOpen ? 'Confirmar registro' : 'Registro cerrado'}
                             </button>
                             </form>
                         ) : null}
