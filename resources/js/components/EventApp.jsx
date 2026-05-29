@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ConfirmDialog from './ui/ConfirmDialog';
 import { NotificationProvider, useNotifications } from './ui/NotificationSystem';
 
@@ -6,10 +6,16 @@ const eventDate = new Date('2026-07-04T19:00:00-05:00');
 const totalCapacity = 100;
 const storageKey = 'miquinceanera-registration';
 
-const statsSeed = {
-    registeredGroups: 18,
-    occupiedSeats: 54,
-    confirmedGuests: 38,
+const initialStats = {
+    eventTitle: 'Quinceañera',
+    eventStartsAt: eventDate.toISOString(),
+    totalCapacity: totalCapacity,
+    availableSeats: totalCapacity,
+    registeredGroups: 0,
+    confirmedGroups: 0,
+    confirmedGuests: 0,
+    attendedGroups: 0,
+    attendedGuests: 0,
 };
 
 function formatNumber(value) {
@@ -126,6 +132,7 @@ function EventAppContent() {
     const [restoringSession, setRestoringSession] = useState(true);
     const [manualAccessOpen, setManualAccessOpen] = useState(false);
     const [accessCodeInput, setAccessCodeInput] = useState('');
+    const [eventStats, setEventStats] = useState(initialStats);
     const { pushNotification } = useNotifications();
 
     useEffect(() => {
@@ -181,15 +188,50 @@ function EventAppContent() {
         return () => window.clearInterval(timer);
     }, []);
 
-    const availableSeats = useMemo(
-        () => Math.max(totalCapacity - statsSeed.occupiedSeats, 0),
-        [],
-    );
+    useEffect(() => {
+        const controller = new AbortController();
+
+        const loadStats = async () => {
+            try {
+                const response = await fetch('/api/event/stats', {
+                    signal: controller.signal,
+                    headers: {
+                        Accept: 'application/json',
+                    },
+                });
+
+                if (!response.ok) {
+                    return;
+                }
+
+                const payload = await response.json();
+                const data = payload?.data ?? {};
+
+                setEventStats({
+                    eventTitle: data.event_title ?? initialStats.eventTitle,
+                    eventStartsAt: data.event_starts_at ?? initialStats.eventStartsAt,
+                    totalCapacity: Number(data.total_capacity ?? initialStats.totalCapacity),
+                    availableSeats: Number(data.available_seats ?? initialStats.availableSeats),
+                    registeredGroups: Number(data.registered_groups ?? initialStats.registeredGroups),
+                    confirmedGroups: Number(data.confirmed_groups ?? initialStats.confirmedGroups),
+                    confirmedGuests: Number(data.confirmed_guests ?? initialStats.confirmedGuests),
+                    attendedGroups: Number(data.attended_groups ?? initialStats.attendedGroups),
+                    attendedGuests: Number(data.attended_guests ?? initialStats.attendedGuests),
+                });
+            } catch {
+                // Keep the initial values if the stats endpoint is unavailable.
+            }
+        };
+
+        loadStats();
+
+        return () => controller.abort();
+    }, []);
 
     const metrics = [
-        { label: 'Cupos restantes', value: availableSeats },
-        { label: 'Grupos registrados', value: statsSeed.registeredGroups },
-        { label: 'Invitados confirmados', value: statsSeed.confirmedGuests },
+        { label: 'Cupos restantes', value: eventStats.availableSeats },
+        { label: 'Grupos registrados', value: eventStats.registeredGroups },
+        { label: 'Invitados confirmados', value: eventStats.confirmedGuests },
     ];
 
     const hasRegistration = submissionState.registration !== null;
@@ -367,7 +409,7 @@ function EventAppContent() {
                     </div>
                     <div className="rounded-full border border-slate-200/10 bg-slate-950/60 px-4 py-2 text-right">
                         <p className="text-[11px] uppercase tracking-[0.3em] text-slate-400">Evento</p>
-                        <p className="text-sm font-medium text-slate-100">4 de julio de 2026 · 7:00 PM</p>
+                        <p className="text-sm font-medium text-slate-100">{eventStats.eventTitle} · 4 de julio de 2026 · 7:00 PM</p>
                     </div>
                 </header>
 
@@ -415,8 +457,8 @@ function EventAppContent() {
                                     <p className="text-[11px] uppercase tracking-[0.35em] text-slate-400">Estado del acceso</p>
                                     <div className="mt-3 flex items-end justify-between gap-4">
                                         <div>
-                                            <p className="text-3xl font-semibold text-white">{availableSeats}</p>
-                                            <p className="text-sm text-slate-400">cupos disponibles de {totalCapacity}</p>
+                                            <p className="text-3xl font-semibold text-white">{eventStats.availableSeats}</p>
+                                            <p className="text-sm text-slate-400">cupos disponibles de {eventStats.totalCapacity}</p>
                                         </div>
                                         <span className="rounded-full border border-emerald-300/20 bg-emerald-300/10 px-3 py-1 text-xs font-medium text-emerald-200">
                                             Registro abierto
@@ -425,7 +467,7 @@ function EventAppContent() {
                                     <div className="mt-5 h-2 overflow-hidden rounded-full bg-white/10">
                                         <div
                                             className="h-full rounded-full bg-gradient-to-r from-slate-200 via-cyan-200 to-slate-400"
-                                            style={{ width: `${Math.max((statsSeed.occupiedSeats / totalCapacity) * 100, 8)}%` }}
+                                            style={{ width: `${Math.max(eventStats.totalCapacity > 0 ? ((eventStats.totalCapacity - eventStats.availableSeats) / eventStats.totalCapacity) * 100 : 0, 8)}%` }}
                                         />
                                     </div>
                                 </div>

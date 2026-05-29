@@ -182,6 +182,38 @@ class RegistrationController extends Controller
         ], 201);
     }
 
+    public function stats(): JsonResponse
+    {
+        $event = $this->resolveEvent(null);
+        $registrations = Registration::query()->where('event_id', $event->id);
+
+        $confirmedRegistrations = (clone $registrations)->where('status', 'confirmed');
+        $confirmedGuests = (int) $confirmedRegistrations->sum('total_people');
+        $registeredGroups = (int) $registrations->count();
+        $attendedGroups = (int) AttendanceLog::query()
+            ->whereHas('registration', fn ($query) => $query->where('event_id', $event->id))
+            ->distinct()
+            ->count('registration_id');
+        $attendedGuests = (int) Registration::query()
+            ->where('event_id', $event->id)
+            ->whereHas('attendanceLogs')
+            ->sum('total_people');
+
+        return response()->json([
+            'data' => [
+                'event_title' => $event->title,
+                'event_starts_at' => $event->starts_at?->toIso8601String(),
+                'total_capacity' => (int) $event->capacity,
+                'available_seats' => max(0, (int) $event->capacity - $confirmedGuests),
+                'registered_groups' => $registeredGroups,
+                'confirmed_groups' => (int) (clone $confirmedRegistrations)->count(),
+                'confirmed_guests' => $confirmedGuests,
+                'attended_groups' => $attendedGroups,
+                'attended_guests' => $attendedGuests,
+            ],
+        ]);
+    }
+
     private function resolveEvent(?int $eventId): Event
     {
         if ($eventId !== null) {

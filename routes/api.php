@@ -11,6 +11,7 @@ Route::get('/health', function () {
 });
 
 Route::post('/registrations', [RegistrationController::class, 'store']);
+Route::get('/event/stats', [RegistrationController::class, 'stats'])->name('event.stats');
 Route::get('/registrations/access/{accessCode}', [RegistrationController::class, 'showByAccessCode'])->name('registrations.access.show');
 Route::get('/registrations/{qrCode}', [RegistrationController::class, 'show']);
 Route::get('/registrations/{qrCode}/qr', [RegistrationController::class, 'qr'])->name('registrations.qr');
