@@ -58,6 +58,14 @@ function normalize(value) {
     return String(value || '').toLowerCase();
 }
 
+function humanizeStatus(status) {
+    if (status === 'confirmed') return 'Confirmado';
+    if (status === 'pending') return 'Pendiente';
+    if (status === 'cancelled') return 'Cancelado';
+    if (status === 'attended' || status === 'assisted') return 'Asistió';
+    return status ? String(status) : '—';
+}
+
 function pushToast({ variant = 'info', title = '', message = '', timeout = 2800 }) {
     if (!toastStack) {
         return;
@@ -123,7 +131,7 @@ function renderLookup(registration) {
         <div class="space-y-3">
             <div class="flex items-start justify-between gap-4">
                 <div>
-                    <p class="text-xs uppercase tracking-[0.3em] text-slate-400">${escapeHtml(registration.status)}</p>
+                    <p class="text-xs uppercase tracking-[0.3em] text-slate-400">${escapeHtml(humanizeStatus(registration.status))}</p>
                     <h3 class="mt-1 text-2xl font-semibold text-white">${escapeHtml(registration.titular_name)}</h3>
                 </div>
                 <p class="text-sm text-slate-400">${escapeHtml(registration.created_at || '')}</p>
@@ -155,7 +163,7 @@ function renderScanPreview(registration) {
                     <p class="text-xs uppercase tracking-[0.3em] text-cyan-200/80">Token validado</p>
                     <h3 class="mt-1 text-2xl font-semibold text-white">${escapeHtml(registration.titular_name)}</h3>
                 </div>
-                <span class="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs font-medium uppercase tracking-[0.3em] text-cyan-100">${escapeHtml(registration.status)}</span>
+                <span class="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs font-medium uppercase tracking-[0.3em] text-cyan-100">${escapeHtml(humanizeStatus(registration.status))}</span>
             </div>
             <div class="rounded-2xl border border-white/10 bg-slate-950/70 p-4 text-sm text-slate-300">
                 <p class="text-[11px] uppercase tracking-[0.3em] text-slate-400">Código humano</p>
@@ -260,14 +268,18 @@ async function runAttendanceFlow(registration, qrCode) {
     try {
         const payload = await submitQrScan(qrCode);
         const message = payload.data?.already_scanned
-            ? `${payload.message} ${loadedRegistration.titular_name} ya estaba validado; no se registró de nuevo.`
-            : `${payload.message} ${loadedRegistration.titular_name} quedó marcado con asistencia. El cupo no se modifica.`;
+            ? `${loadedRegistration.titular_name} ya había asistido. No se registró de nuevo.`
+            : `${loadedRegistration.titular_name} asistió. El cupo no se modifica.`;
 
         scanResult.textContent = message;
         pushToast({
             variant: payload.data?.already_scanned ? 'info' : 'success',
-            title: payload.data?.already_scanned ? 'Ya validado' : 'Asistencia marcada',
+            title: 'Asistió',
             message: loadedRegistration.titular_name,
+        });
+        renderScanPreview({
+            ...loadedRegistration,
+            status: 'Asistió',
         });
     } catch (error) {
         scanResult.textContent = error instanceof Error ? error.message : 'No se pudo validar el QR.';

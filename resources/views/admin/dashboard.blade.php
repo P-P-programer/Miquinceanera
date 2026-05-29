@@ -160,7 +160,7 @@
                                         @forelse ($registrations as $registration)
                                             <tr data-status="{{ $registration['status'] }}" data-search="{{ $registration['search_text'] }}" class="align-top">
                                                 <td class="px-4 py-4">
-                                                    <span class="inline-flex rounded-full border px-3 py-1 text-xs font-medium uppercase tracking-[0.3em] {{ $registration['status'] === 'confirmed' ? 'border-emerald-300/20 bg-emerald-300/10 text-emerald-100' : ($registration['status'] === 'pending' ? 'border-amber-300/20 bg-amber-300/10 text-amber-100' : 'border-rose-300/20 bg-rose-300/10 text-rose-100') }}">{{ $registration['status'] }}</span>
+                                                    <span class="inline-flex rounded-full border px-3 py-1 text-xs font-medium uppercase tracking-[0.3em] {{ $registration['status_class'] }}">{{ $registration['status_label'] }}</span>
                                                 </td>
                                                 <td class="px-4 py-4">
                                                     <div class="space-y-2">

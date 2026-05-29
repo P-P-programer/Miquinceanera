@@ -41,9 +41,25 @@ class DashboardController extends Controller
 
     private function formatRegistration(Registration $registration): array
     {
+        $statusLabel = match (true) {
+            $registration->status === 'cancelled' => 'Cancelado',
+            $registration->attendance_logs_count > 0 => 'Asistió',
+            $registration->status === 'pending' => 'Pendiente',
+            default => 'Confirmado',
+        };
+
+        $statusClass = match (true) {
+            $registration->status === 'cancelled' => 'border-rose-300/20 bg-rose-300/10 text-rose-100',
+            $registration->attendance_logs_count > 0 => 'border-cyan-300/20 bg-cyan-300/10 text-cyan-100',
+            $registration->status === 'pending' => 'border-amber-300/20 bg-amber-300/10 text-amber-100',
+            default => 'border-emerald-300/20 bg-emerald-300/10 text-emerald-100',
+        };
+
         return [
             'id' => $registration->id,
             'status' => $registration->status,
+            'status_label' => $statusLabel,
+            'status_class' => $statusClass,
             'titular_name' => $registration->titular_name,
             'total_people' => $registration->total_people,
             'access_code' => $registration->access_code,
