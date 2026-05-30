@@ -5,6 +5,21 @@ import { NotificationProvider, useNotifications } from './ui/NotificationSystem'
 const eventDate = new Date('2026-07-04T19:00:00-05:00');
 const totalCapacity = 100;
 const storageKey = 'miquinceanera-registration';
+const eventLocationLabel = 'Finca de Javier Mendoza, Chicoral, Tolima, Colombia';
+const eventCoordinates = {
+    latitude: 4.211769,
+    longitude: -74.97885,
+};
+const eventMapEmbedUrl = (() => {
+    const latitudeDelta = 0.008;
+    const longitudeDelta = 0.008;
+    const minLatitude = eventCoordinates.latitude - latitudeDelta;
+    const maxLatitude = eventCoordinates.latitude + latitudeDelta;
+    const minLongitude = eventCoordinates.longitude - longitudeDelta;
+    const maxLongitude = eventCoordinates.longitude + longitudeDelta;
+
+    return `https://www.openstreetmap.org/export/embed.html?bbox=${minLongitude}%2C${minLatitude}%2C${maxLongitude}%2C${maxLatitude}&layer=mapnik&marker=${eventCoordinates.latitude}%2C${eventCoordinates.longitude}`;
+})();
 
 const initialStats = {
     eventTitle: 'Quinceañera',
@@ -233,7 +248,7 @@ function EventAppContent() {
     const metrics = [
         { label: 'Cupos restantes', value: eventStats.availableSeats },
         { label: 'Grupos registrados', value: eventStats.registeredGroups },
-        { label: 'Grupos confirmados', value: eventStats.confirmedGroups },
+        { label: 'Integrantes confirmados', value: eventStats.confirmedGuests },
     ];
 
     const hasRegistration = submissionState.registration !== null;
@@ -402,14 +417,59 @@ function EventAppContent() {
         }
     }
 
-    const privateSections = [
-        'Detalles del evento',
-        'Horario de la fiesta',
-        'Código de vestimenta',
-        'Ubicación con mapa',
-        'Álbum colaborativo',
-        'Recomendación de canciones',
+    const eventDetails = [
+        { label: 'Entrada', value: '7:30 PM' },
+        { label: 'Quinceañera', value: '9:00 PM' },
+        { label: 'Fiesta', value: '10:00 PM' },
+        { label: 'Cierre', value: '3:00 AM' },
     ];
+
+    const eventNotes = [
+        'Por favor llega puntual para no perderte la entrada ni las fotos iniciales.',
+        'Puedes subir fotos al álbum colaborativo durante la fiesta.',
+        'Déjanos tus canciones recomendadas para armar la playlist de la noche.',
+    ];
+
+    const eventReminders = [
+        'Código de vestimenta: elegante de noche',
+        'Acceso privado con invitación',
+        'Respeta el horario de ingreso',
+        'Te esperamos para celebrar hasta la madrugada',
+    ];
+
+    const eventAgenda = [
+        { time: '7:30 PM', title: 'Entrada', description: 'Llegada de invitados y recepción.' },
+        { time: '9:00 PM', title: 'Quinceañera', description: 'Momento principal, fotos y presentación especial.' },
+        { time: '10:00 PM', title: 'Fiesta', description: 'Empieza la celebración, baile y música.' },
+        { time: '3:00 AM', title: 'Cierre', description: 'Última canción, despedida y fin de la fiesta.' },
+    ];
+
+    const eventHighlights = [
+        'Código QR único por grupo',
+        'Acceso privado con invitación',
+        'Control de cupos en tiempo real',
+        'Detalles visibles solo para invitados confirmados',
+        'Colores claros y look formal para la fiesta',
+    ];
+
+    const mapLinks = [
+        {
+            label: 'OpenStreetMap',
+            href: `https://www.openstreetmap.org/?mlat=${eventCoordinates.latitude}&mlon=${eventCoordinates.longitude}#map=17/${eventCoordinates.latitude}/${eventCoordinates.longitude}`,
+        },
+        {
+            label: 'Google Maps',
+            href: `https://www.google.com/maps/search/?api=1&query=${eventCoordinates.latitude},${eventCoordinates.longitude}`,
+        },
+        {
+            label: 'Waze',
+            href: `https://waze.com/ul?ll=${eventCoordinates.latitude},${eventCoordinates.longitude}&navigate=yes`,
+        },
+    ];
+
+    const closedMessage = eventStats.registrationOpen
+        ? 'Aún puedes registrar tu grupo y luego ver el resto de detalles.'
+        : 'Ya se cerraron los cupos. Si ya te inscribiste, puedes seguir viendo los detalles con tu código y te esperamos en la fiesta.';
 
     return (
         <div className="min-h-screen text-slate-100">
@@ -485,17 +545,131 @@ function EventAppContent() {
                                 </div>
 
                                 <div className="rounded-[1.75rem] border border-white/10 bg-white/5 p-5 backdrop-blur-xl">
-                                    <p className="text-[11px] uppercase tracking-[0.35em] text-slate-400">Lo privado</p>
-                                    <p className="mt-3 text-lg font-medium text-white">Se desbloquea después del registro o con tu código de acceso.</p>
+                                    <p className="text-[11px] uppercase tracking-[0.35em] text-slate-400">Detalles del evento</p>
+                                    <div className={`mt-3 rounded-2xl border px-4 py-4 text-sm leading-6 ${eventStats.registrationOpen ? 'border-cyan-300/20 bg-cyan-300/10 text-cyan-50' : 'border-emerald-300/20 bg-emerald-300/10 text-emerald-50'}`}>
+                                        {closedMessage}
+                                    </div>
                                     <div className="mt-4 grid gap-2">
-                                        {privateSections.map((item) => (
-                                            <div key={item} className="flex items-center justify-between rounded-2xl border border-white/8 bg-slate-950/55 px-4 py-3 text-sm text-slate-300">
-                                                <span>{item}</span>
-                                                <span className="text-slate-500">Bloqueado</span>
+                                        {eventDetails.map((item) => (
+                                            <div key={item.label} className="flex items-start justify-between gap-4 rounded-2xl border border-white/8 bg-slate-950/55 px-4 py-3 text-sm text-slate-300">
+                                                <span className="text-slate-400">{item.label}</span>
+                                                <span className="text-right font-medium text-white">{item.value}</span>
                                             </div>
                                         ))}
                                     </div>
+                                    <div className="mt-4 flex flex-wrap gap-2">
+                                        {eventHighlights.map((item) => (
+                                            <span key={item} className="rounded-full border border-white/10 bg-white/5 px-3 py-2 text-xs font-medium text-slate-200">
+                                                {item}
+                                            </span>
+                                        ))}
+                                    </div>
                                 </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section className="rounded-[2rem] border border-white/10 bg-slate-950/65 p-6 shadow-2xl shadow-slate-950/50 backdrop-blur-xl xl:col-span-2">
+                        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+                            <div>
+                                <p className="text-[11px] uppercase tracking-[0.35em] text-slate-400">Módulo inicial</p>
+                                <h3 className="mt-2 text-2xl font-semibold text-white">Detalles del evento</h3>
+                                <p className="mt-2 text-sm leading-6 text-slate-300">
+                                    Aquí arranca la parte pública que vemos primero: horario, ubicación, códigos y lo necesario para llegar sin perderse.
+                                </p>
+                            </div>
+                            <div className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-4 py-2 text-xs font-medium uppercase tracking-[0.3em] text-cyan-100">
+                                {eventStats.registrationOpen ? 'Sección visible para invitados' : 'Sección visible para invitados confirmados'}
+                            </div>
+                        </div>
+
+                        <div className="mt-6 grid gap-4 lg:grid-cols-[1.05fr_0.95fr]">
+                            <div className="space-y-4">
+                                {eventAgenda.map((item, index) => (
+                                    <article key={item.time} className="flex gap-4 rounded-[1.5rem] border border-white/10 bg-white/5 p-4">
+                                        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-300/10 text-center text-xs font-semibold uppercase tracking-[0.25em] text-cyan-100">
+                                            {item.time}
+                                        </div>
+                                        <div className="min-w-0 flex-1">
+                                            <div className="flex items-start justify-between gap-3">
+                                                <div>
+                                                    <p className="text-sm font-semibold text-white">{item.title}</p>
+                                                    <p className="mt-1 text-sm leading-6 text-slate-300">{item.description}</p>
+                                                </div>
+                                                <span className="text-[11px] uppercase tracking-[0.3em] text-slate-500">0{index + 1}</span>
+                                            </div>
+                                        </div>
+                                    </article>
+                                ))}
+                            </div>
+
+                            <div className="space-y-4">
+                                <article className="overflow-hidden rounded-[1.5rem] border border-white/10 bg-[radial-gradient(circle_at_top,rgba(125,211,252,0.16),transparent_40%),linear-gradient(180deg,rgba(15,23,42,0.95),rgba(2,6,23,0.95))] p-5">
+                                    <p className="text-[11px] uppercase tracking-[0.35em] text-slate-400">Ubicación</p>
+                                    <h4 className="mt-2 text-xl font-semibold text-white">Finca de Javier Mendoza</h4>
+                                    <p className="mt-2 text-sm leading-6 text-slate-300">
+                                        Está ubicada en los lugares de Chicoral, en un espacio muy bonito y tranquilo para la celebración.
+                                    </p>
+                                    <div className="mt-4 rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-slate-200">
+                                        <p className="text-[11px] uppercase tracking-[0.3em] text-slate-400">Referencia</p>
+                                        <p className="mt-2 font-medium text-white">Portón grande marrón al lado de la central</p>
+                                    </div>
+                                    <div className="mt-4 overflow-hidden rounded-2xl border border-white/10 bg-slate-950/55">
+                                        <iframe
+                                            title={eventLocationLabel}
+                                            src={eventMapEmbedUrl}
+                                            className="h-64 w-full"
+                                            loading="lazy"
+                                            referrerPolicy="no-referrer-when-downgrade"
+                                        />
+                                        <div className="border-t border-white/10 p-4 text-sm text-slate-200">
+                                            <p className="text-[11px] uppercase tracking-[0.3em] text-slate-400">Vista previa</p>
+                                            <p className="mt-2 text-sm leading-6 text-slate-300">
+                                                Esta vista se abre sin API y te deja ver la ubicación antes de tocar en Maps o Waze.
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+                                        {mapLinks.map((link) => (
+                                            <a
+                                                key={link.label}
+                                                className="inline-flex flex-1 items-center justify-center rounded-2xl border border-white/10 bg-slate-950/55 px-4 py-3 text-sm font-medium text-white transition hover:bg-white/10"
+                                                href={link.href}
+                                                target="_blank"
+                                                rel="noreferrer"
+                                            >
+                                                {link.label}
+                                            </a>
+                                        ))}
+                                    </div>
+                                </article>
+
+                                <article className="rounded-[1.5rem] border border-white/10 bg-white/5 p-5">
+                                    <p className="text-[11px] uppercase tracking-[0.35em] text-slate-400">Código de vestimenta</p>
+                                    <p className="mt-2 text-lg font-semibold text-white">Formal y colores claros</p>
+                                    <p className="mt-2 text-sm leading-6 text-slate-300">
+                                        Queremos que te sientas cómodo y te veas bien en la foto. Para la fiesta preferimos un look formal y en colores claros.
+                                    </p>
+                                </article>
+
+                                <article className="rounded-[1.5rem] border border-white/10 bg-white/5 p-5">
+                                    <p className="text-[11px] uppercase tracking-[0.35em] text-slate-400">Tips y notas</p>
+                                    <div className="mt-3 space-y-3">
+                                        {eventNotes.map((item) => (
+                                            <div key={item} className="flex items-start gap-3 text-sm leading-6 text-slate-300">
+                                                <span className="mt-1 h-2.5 w-2.5 rounded-full bg-cyan-200" />
+                                                <p>{item}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <div className="mt-4 flex flex-wrap gap-2">
+                                        {eventReminders.map((item) => (
+                                            <span key={item} className="rounded-full border border-white/10 bg-slate-950/60 px-3 py-2 text-xs font-medium text-slate-200">
+                                                {item}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </article>
                             </div>
                         </div>
                     </section>
