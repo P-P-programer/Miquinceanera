@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\AlbumPhoto;
 use App\Models\Event;
 use App\Models\AttendanceLog;
 use App\Models\Registration;
 use App\Models\RegistrationPerson;
+use App\Models\SongRequest;
 use BaconQrCode\Renderer\Image\SvgImageBackEnd;
 use BaconQrCode\Renderer\ImageRenderer;
 use BaconQrCode\Renderer\RendererStyle\RendererStyle;
@@ -210,6 +212,8 @@ class RegistrationController extends Controller
             ->whereHas('attendanceLogs')
             ->sum('total_people');
         $availableSeats = max(0, (int) $event->capacity - $confirmedGuests);
+        $albumPhotosCount = AlbumPhoto::query()->where('event_id', $event->id)->count();
+        $songRequestsCount = SongRequest::query()->where('event_id', $event->id)->count();
 
         return response()->json([
             'data' => [
@@ -223,6 +227,8 @@ class RegistrationController extends Controller
                 'confirmed_guests' => $confirmedGuests,
                 'attended_groups' => $attendedGroups,
                 'attended_guests' => $attendedGuests,
+                'album_photos_count' => $albumPhotosCount,
+                'song_requests_count' => $songRequestsCount,
             ],
         ]);
     }

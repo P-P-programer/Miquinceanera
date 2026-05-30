@@ -45,6 +45,14 @@
                         <p class="text-sm text-slate-400">Escaneos</p>
                         <p class="mt-2 text-3xl font-semibold text-white">{{ $stats['attendanceLogs'] }}</p>
                     </div>
+                    <div class="admin-card p-5">
+                        <p class="text-sm text-slate-400">Fotos álbum</p>
+                        <p class="mt-2 text-3xl font-semibold text-white">{{ $stats['albumPhotos'] }}</p>
+                    </div>
+                    <div class="admin-card p-5">
+                        <p class="text-sm text-slate-400">Canciones</p>
+                        <p class="mt-2 text-3xl font-semibold text-white">{{ $stats['songRequests'] }}</p>
+                    </div>
                 </section>
 
                 <section class="admin-responsive-grid">
@@ -235,6 +243,73 @@
                             <div class="admin-card p-4">
                                 <p class="text-[11px] uppercase tracking-[0.35em] text-slate-400">Resultado del lookup</p>
                                 <div id="lookup-result" class="mt-4 rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-slate-300">Cuando busques por código humano, aquí se mostrará el registro.</div>
+                            </div>
+                        </div>
+
+                        <div class="grid gap-4 lg:grid-cols-2">
+                            <div class="admin-card p-4">
+                                <div class="flex items-end justify-between gap-3">
+                                    <div>
+                                        <p class="text-[11px] uppercase tracking-[0.35em] text-slate-400">Álbum</p>
+                                        <h2 class="mt-2 text-2xl font-semibold text-white">Fotos compartidas</h2>
+                                    </div>
+                                    <span class="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs uppercase tracking-[0.25em] text-slate-300">Borrado con confirmación</span>
+                                </div>
+
+                                <div class="mt-4 grid gap-4 sm:grid-cols-2">
+                                    @forelse ($albumPhotos as $photo)
+                                        <article class="overflow-hidden rounded-[1.5rem] border border-white/10 bg-slate-950/60">
+                                            <img src="{{ $photo['photo_url'] }}" alt="Foto compartida por {{ $photo['submitted_by'] }}" class="h-40 w-full object-cover">
+                                            <div class="space-y-3 p-4">
+                                                <div>
+                                                    <p class="font-semibold text-white">{{ $photo['submitted_by'] }}</p>
+                                                    @if ($photo['caption'])
+                                                        <p class="mt-1 text-sm leading-6 text-slate-300">{{ $photo['caption'] }}</p>
+                                                    @endif
+                                                    <p class="mt-2 text-xs uppercase tracking-[0.3em] text-slate-500">{{ $photo['created_at'] }}</p>
+                                                </div>
+
+                                                <form method="POST" action="{{ route('admin.album-photos.destroy', $photo['id']) }}" class="album-photo-delete-form" data-confirm-message="¿Eliminar la foto de {{ $photo['submitted_by'] }}? Esta acción no se puede deshacer.">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="w-full rounded-2xl border border-rose-300/20 bg-rose-300/10 px-4 py-3 text-sm font-medium text-rose-100 transition hover:bg-rose-300/20">Eliminar foto</button>
+                                                </form>
+                                            </div>
+                                        </article>
+                                    @empty
+                                        <p class="text-sm text-slate-400">Todavía no hay fotos compartidas.</p>
+                                    @endforelse
+                                </div>
+                            </div>
+
+                            <div class="admin-card p-4">
+                                <div class="flex items-end justify-between gap-3">
+                                    <div>
+                                        <p class="text-[11px] uppercase tracking-[0.35em] text-slate-400">Canciones</p>
+                                        <h2 class="mt-2 text-2xl font-semibold text-white">Lista para el DJ</h2>
+                                    </div>
+                                    <a href="{{ route('admin.song-requests.export') }}" class="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-4 py-2 text-xs font-medium uppercase tracking-[0.25em] text-cyan-100 transition hover:bg-cyan-300/20">Exportar PDF</a>
+                                </div>
+
+                                <div class="mt-4 space-y-3">
+                                    @forelse ($songRequests as $song)
+                                        <article class="rounded-[1.5rem] border border-white/10 bg-slate-950/60 p-4">
+                                            <div class="flex items-start justify-between gap-4">
+                                                <div>
+                                                    <p class="font-semibold text-white">{{ $song->song_title }}</p>
+                                                    <p class="mt-1 text-sm text-slate-300">{{ $song->artist_name ?: 'Artista no indicado' }}</p>
+                                                    <p class="mt-2 text-xs uppercase tracking-[0.3em] text-slate-500">{{ $song->requester_name }}</p>
+                                                </div>
+                                                <p class="text-xs uppercase tracking-[0.3em] text-slate-500">{{ $song->created_at?->format('d/m H:i') }}</p>
+                                            </div>
+                                            @if ($song->note)
+                                                <p class="mt-3 text-sm leading-6 text-slate-300">{{ $song->note }}</p>
+                                            @endif
+                                        </article>
+                                    @empty
+                                        <p class="text-sm text-slate-400">Aún no llegan canciones.</p>
+                                    @endforelse
+                                </div>
                             </div>
                         </div>
                     </div>

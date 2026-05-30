@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\AlbumPhoto;
 use App\Models\AttendanceLog;
 use App\Models\Event;
 use App\Models\Registration;
+use App\Models\SongRequest;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
@@ -30,8 +32,27 @@ class DashboardController extends Controller
                 'occupiedSeats' => $occupiedSeats,
                 'availableSeats' => $availableSeats,
                 'attendanceLogs' => AttendanceLog::count(),
+                'albumPhotos' => AlbumPhoto::count(),
+                'songRequests' => SongRequest::count(),
             ],
             'registrations' => $registrations,
+            'albumPhotos' => AlbumPhoto::query()
+                ->latest()
+                ->limit(8)
+                ->get()
+                ->map(fn (AlbumPhoto $photo) => [
+                    'id' => $photo->id,
+                    'submitted_by' => $photo->submitted_by,
+                    'caption' => $photo->caption,
+                    'photo_url' => asset('storage/'.$photo->photo_path),
+                    'created_at' => $photo->created_at?->format('d/m/Y H:i'),
+                ])
+                ->values(),
+            'songRequests' => SongRequest::query()
+                ->latest()
+                ->limit(20)
+                ->get()
+                ->values(),
             'recentScans' => AttendanceLog::with('registration')
                 ->latest('scanned_at')
                 ->limit(8)

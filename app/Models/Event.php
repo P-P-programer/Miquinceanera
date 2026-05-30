@@ -25,4 +25,14 @@ class Event extends Model
     {
         return $this->hasMany(Registration::class);
     }
+
+    public function albumPhotos()
+    {
+        return $this->hasMany(AlbumPhoto::class);
+    }
+
+    public function songRequests()
+    {
+        return $this->hasMany(SongRequest::class);
+    }
 }

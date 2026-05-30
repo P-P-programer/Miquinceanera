@@ -31,6 +31,8 @@ const initialStats = {
     confirmedGuests: 0,
     attendedGroups: 0,
     attendedGuests: 0,
+    albumPhotosCount: 0,
+    songRequestsCount: 0,
     registrationOpen: true,
 };
 
@@ -149,6 +151,25 @@ function EventAppContent() {
     const [manualAccessOpen, setManualAccessOpen] = useState(false);
     const [accessCodeInput, setAccessCodeInput] = useState('');
     const [eventStats, setEventStats] = useState(initialStats);
+    const [albumPhotos, setAlbumPhotos] = useState([]);
+    const [albumFormState, setAlbumFormState] = useState({
+        caption: '',
+        photo: null,
+    });
+    const [albumSubmissionState, setAlbumSubmissionState] = useState({
+        status: 'idle',
+        message: '',
+    });
+    const [albumInputKey, setAlbumInputKey] = useState(0);
+    const [songFormState, setSongFormState] = useState({
+        song_title: '',
+        artist_name: '',
+        note: '',
+    });
+    const [songSubmissionState, setSongSubmissionState] = useState({
+        status: 'idle',
+        message: '',
+    });
     const { pushNotification } = useNotifications();
 
     useEffect(() => {
@@ -233,6 +254,8 @@ function EventAppContent() {
                     confirmedGuests: Number(data.confirmed_guests ?? initialStats.confirmedGuests),
                     attendedGroups: Number(data.attended_groups ?? initialStats.attendedGroups),
                     attendedGuests: Number(data.attended_guests ?? initialStats.attendedGuests),
+                    albumPhotosCount: Number(data.album_photos_count ?? initialStats.albumPhotosCount),
+                    songRequestsCount: Number(data.song_requests_count ?? initialStats.songRequestsCount),
                     registrationOpen: Boolean(data.registration_open ?? initialStats.registrationOpen),
                 });
             } catch {
@@ -253,7 +276,41 @@ function EventAppContent() {
 
     const hasRegistration = submissionState.registration !== null;
     const activeRegistration = hasRegistration ? submissionState.registration : null;
+    const activeAccessCode = activeRegistration?.access_code ?? '';
     const canViewPrivateDetails = hasRegistration;
+
+    useEffect(() => {
+        if (!canViewPrivateDetails || !activeAccessCode) {
+            setAlbumPhotos([]);
+            return;
+        }
+
+        const controller = new AbortController();
+
+        const loadAlbumPhotos = async () => {
+            try {
+                const response = await fetch(`/api/album/photos?access_code=${encodeURIComponent(activeAccessCode)}`, {
+                    signal: controller.signal,
+                    headers: {
+                        Accept: 'application/json',
+                    },
+                });
+
+                if (!response.ok) {
+                    return;
+                }
+
+                const payload = await response.json();
+                setAlbumPhotos(payload.data?.photos ?? []);
+            } catch {
+                setAlbumPhotos([]);
+            }
+        };
+
+        loadAlbumPhotos();
+
+        return () => controller.abort();
+    }, [canViewPrivateDetails, activeAccessCode, albumSubmissionState.message]);
 
     function scrollToEventDetails() {
         document.getElementById('event-details')?.scrollIntoView({
@@ -422,6 +479,132 @@ function EventAppContent() {
                 variant: 'error',
                 title: 'Código inválido',
                 message: error instanceof Error ? error.message : 'No pudimos validar tu código.',
+            });
+        }
+    }
+
+    async function handleAlbumSubmit(event) {
+        event.preventDefault();
+
+        if (!activeAccessCode || !albumFormState.photo) {
+            setAlbumSubmissionState({
+                status: 'error',
+                message: 'Selecciona una foto antes de enviarla.',
+            });
+
+            return;
+        }
+
+        setAlbumSubmissionState({
+            status: 'loading',
+            message: 'Guardando la foto...',
+        });
+
+        const formData = new FormData();
+        formData.append('access_code', activeAccessCode);
+        formData.append('submitted_by', activeRegistration?.titular_name ?? '');
+        formData.append('caption', albumFormState.caption);
+        formData.append('photo', albumFormState.photo);
+
+        try {
+            const response = await fetch('/api/album/photos', {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                },
+                body: formData,
+            });
+
+            const payload = await response.json();
+
+            if (!response.ok) {
+                const firstError = Object.values(payload.errors || {})[0]?.[0] || 'No se pudo guardar la foto.';
+                throw new Error(firstError);
+            }
+
+            setAlbumSubmissionState({
+                status: 'success',
+                message: payload.message,
+            });
+            setAlbumFormState({
+                caption: '',
+                photo: null,
+            });
+            setAlbumInputKey((current) => current + 1);
+            setAlbumPhotos((current) => [payload.data, ...current].slice(0, 8));
+
+            pushNotification({
+                variant: 'success',
+                title: 'Foto guardada',
+                message: 'Tu momento ya quedó en el álbum.',
+            });
+        } catch (error) {
+            setAlbumSubmissionState({
+                status: 'error',
+                message: error instanceof Error ? error.message : 'No se pudo guardar la foto.',
+            });
+        }
+    }
+
+    async function handleSongSubmit(event) {
+        event.preventDefault();
+
+        if (!activeAccessCode || !songFormState.song_title.trim()) {
+            setSongSubmissionState({
+                status: 'error',
+                message: 'Escribe el nombre de la canción antes de enviarla.',
+            });
+
+            return;
+        }
+
+        setSongSubmissionState({
+            status: 'loading',
+            message: 'Guardando la canción...',
+        });
+
+        try {
+            const response = await fetch('/api/song-requests', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                },
+                body: JSON.stringify({
+                    access_code: activeAccessCode,
+                    requester_name: activeRegistration?.titular_name ?? null,
+                    song_title: songFormState.song_title,
+                    artist_name: songFormState.artist_name || null,
+                    note: songFormState.note || null,
+                }),
+            });
+
+            const payload = await response.json();
+
+            if (!response.ok) {
+                const firstError = Object.values(payload.errors || {})[0]?.[0] || 'No se pudo guardar la canción.';
+                throw new Error(firstError);
+            }
+
+            setSongSubmissionState({
+                status: 'success',
+                message: payload.message,
+            });
+            setSongFormState({
+                song_title: '',
+                artist_name: '',
+                note: '',
+            });
+
+            pushNotification({
+                variant: 'success',
+                title: 'Canción guardada',
+                message: 'La sugerencia quedó lista para exportarla al DJ.',
+            });
+        } catch (error) {
+            setSongSubmissionState({
+                status: 'error',
+                message: error instanceof Error ? error.message : 'No se pudo guardar la canción.',
             });
         }
     }
@@ -711,6 +894,90 @@ function EventAppContent() {
                                         </div>
                                     </article>
                                 </div>
+                            </div>
+
+                            <div className="mt-6 grid gap-4 lg:grid-cols-2">
+                                <article className="rounded-[1.5rem] border border-white/10 bg-white/5 p-5">
+                                    <p className="text-[11px] uppercase tracking-[0.35em] text-slate-400">Álbum de momentos</p>
+                                    <h4 className="mt-2 text-xl font-semibold text-white">{eventStats.albumPhotosCount} fotos compartidas</h4>
+                                    <p className="mt-2 text-sm leading-6 text-slate-300">
+                                        Sube tus mejores momentos y mira el álbum completo en una página aparte para no cargar de más este inicio.
+                                    </p>
+                                    <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                                        <div className="rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-4">
+                                            <p className="text-sm text-slate-400">Momento de subir</p>
+                                            <p className="mt-2 text-2xl font-semibold text-white">Comparte tus mejores recuerdos</p>
+                                        </div>
+                                        <div className="rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-4">
+                                            <p className="text-sm text-slate-400">Vista completa</p>
+                                            <p className="mt-2 text-2xl font-semibold text-white">Galería aparte</p>
+                                        </div>
+                                    </div>
+                                    <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+                                        <a href="/album" className="inline-flex flex-1 items-center justify-center rounded-2xl bg-gradient-to-r from-slate-100 to-slate-300 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:opacity-90">
+                                            Abrir álbum
+                                        </a>
+                                        <a href="/album#upload" className="inline-flex flex-1 items-center justify-center rounded-2xl border border-white/10 bg-slate-950/55 px-4 py-3 text-sm font-medium text-white transition hover:bg-white/10">
+                                            Subir foto
+                                        </a>
+                                    </div>
+                                </article>
+
+                                <article className="rounded-[1.5rem] border border-white/10 bg-white/5 p-5">
+                                    <p className="text-[11px] uppercase tracking-[0.35em] text-slate-400">Canciones para el DJ</p>
+                                    <h4 className="mt-2 text-xl font-semibold text-white">{eventStats.songRequestsCount} canciones guardadas</h4>
+                                    <p className="mt-2 text-sm leading-6 text-slate-300">
+                                        Las sugerencias quedan en la base de datos y luego se exportan en PDF para el DJ.
+                                    </p>
+
+                                    <form className="mt-4 space-y-3" onSubmit={handleSongSubmit}>
+                                        <input
+                                            className="w-full rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition focus:border-cyan-300/40"
+                                            placeholder="Nombre de la canción"
+                                            value={songFormState.song_title}
+                                            onChange={(event) => setSongFormState((current) => ({
+                                                ...current,
+                                                song_title: event.target.value,
+                                            }))}
+                                            required
+                                        />
+                                        <input
+                                            className="w-full rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition focus:border-cyan-300/40"
+                                            placeholder="Artista"
+                                            value={songFormState.artist_name}
+                                            onChange={(event) => setSongFormState((current) => ({
+                                                ...current,
+                                                artist_name: event.target.value,
+                                            }))}
+                                        />
+                                        <textarea
+                                            className="min-h-[96px] w-full rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition focus:border-cyan-300/40"
+                                            placeholder="Nota opcional para el DJ"
+                                            value={songFormState.note}
+                                            onChange={(event) => setSongFormState((current) => ({
+                                                ...current,
+                                                note: event.target.value,
+                                            }))}
+                                        />
+                                        <button
+                                            type="submit"
+                                            className="w-full rounded-2xl bg-gradient-to-r from-slate-100 to-slate-300 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+                                            disabled={songSubmissionState.status === 'loading'}
+                                        >
+                                            {songSubmissionState.status === 'loading' ? 'Guardando canción...' : 'Enviar canción'}
+                                        </button>
+                                    </form>
+
+                                    {songSubmissionState.message ? (
+                                        <div className={`mt-3 rounded-2xl border px-4 py-3 text-sm ${songSubmissionState.status === 'error' ? 'border-rose-300/20 bg-rose-300/10 text-rose-100' : 'border-emerald-300/20 bg-emerald-300/10 text-emerald-100'}`}>
+                                            {songSubmissionState.message}
+                                        </div>
+                                    ) : null}
+
+                                    <div className="mt-4 rounded-2xl border border-cyan-300/20 bg-cyan-300/10 p-4 text-sm leading-6 text-cyan-50">
+                                        La lista se exporta en PDF desde admin y el DJ recibe solo el archivo final.
+                                    </div>
+                                </article>
                             </div>
                         </section>
                     ) : (
