@@ -201,7 +201,7 @@ function AlbumAppShell() {
                     <div>
                         <p className="text-[11px] uppercase tracking-[0.4em] text-slate-400">Miquinceañera</p>
                         <h1 className="mt-2 text-4xl font-semibold text-white">Álbum de momentos</h1>
-                        <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">Sube tus mejores momentos aquí. El index solo muestra el conteo; esta vista está hecha para mirar las fotos con más espacio.</p>
+                        <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">Sube tus mejores momentos aquí. Esta página está pensada para ver, guardar y compartir fotos con más espacio y sin prisa.</p>
                     </div>
                     <div className="flex flex-col gap-3 sm:flex-row">
                         <a href="/" className="inline-flex items-center justify-center rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm font-medium text-white transition hover:bg-white/10">Volver a la invitación</a>
@@ -215,8 +215,8 @@ function AlbumAppShell() {
                         <p className="mt-2 text-4xl font-semibold text-white">{stats.photos}</p>
                     </div>
                     <div className="rounded-[1.5rem] border border-white/10 bg-slate-950/70 p-5">
-                        <p className="text-sm text-slate-400">Formato recomendado</p>
-                        <p className="mt-2 text-xl font-semibold text-white">WebP</p>
+                        <p className="text-sm text-slate-400">Carga ligera</p>
+                        <p className="mt-2 text-xl font-semibold text-white">Se optimiza sola</p>
                     </div>
                     <div className="rounded-[1.5rem] border border-white/10 bg-slate-950/70 p-5">
                         <p className="text-sm text-slate-400">Vista</p>
@@ -250,7 +250,7 @@ function AlbumAppShell() {
                     <article className="rounded-[2rem] border border-white/10 bg-white/5 p-6 backdrop-blur-xl">
                         <p className="text-[11px] uppercase tracking-[0.35em] text-slate-400">Subir momento</p>
                         <h2 className="mt-2 text-2xl font-semibold text-white">Comparte una foto</h2>
-                        <p className="mt-2 text-sm leading-6 text-slate-300">La imagen se guarda en formato WebP cuando el servidor lo permite, para que cargue más rápido.</p>
+                        <p className="mt-2 text-sm leading-6 text-slate-300">La foto se guarda de forma optimizada cuando se puede, para que el álbum abra rápido y se vea bien.</p>
 
                         <form className="mt-4 space-y-3" onSubmit={handleAlbumSubmit}>
                             <input

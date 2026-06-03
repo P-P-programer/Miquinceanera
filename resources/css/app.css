@@ -36,3 +36,24 @@ body {
     background: rgba(226, 232, 240, 0.35);
     color: #020617;
 }
+
+@keyframes marquee-scroll {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+.marquee-track {
+    animation: marquee-scroll 55s linear infinite;
+    will-change: transform;
+    width: max-content;
+    min-width: max-content;
+}
+
+.marquee-track:hover {
+    animation-play-state: paused;
+}

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AlbumPhotoController;
+use App\Http\Controllers\Api\GalleryController;
 use App\Http\Controllers\Api\RegistrationController;
 use App\Http\Controllers\Api\SongRequestController;
 use Illuminate\Support\Facades\Route;
@@ -22,4 +23,5 @@ Route::post('/registrations/{qrCode}/scan', [RegistrationController::class, 'sca
 
 Route::get('/album/photos', [AlbumPhotoController::class, 'index'])->name('album.photos.index');
 Route::post('/album/photos', [AlbumPhotoController::class, 'store'])->name('album.photos.store');
+Route::get('/gallery/photos', [GalleryController::class, 'index'])->name('gallery.photos.index');
 Route::post('/song-requests', [SongRequestController::class, 'store'])->name('song-requests.store');

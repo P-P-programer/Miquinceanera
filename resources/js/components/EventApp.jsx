@@ -21,6 +21,11 @@ const eventMapEmbedUrl = (() => {
     return `https://www.openstreetmap.org/export/embed.html?bbox=${minLongitude}%2C${minLatitude}%2C${maxLongitude}%2C${maxLatitude}&layer=mapnik&marker=${eventCoordinates.latitude}%2C${eventCoordinates.longitude}`;
 })();
 
+const featuredPhotosInitialState = {
+    count: 0,
+    photos: [],
+};
+
 const initialStats = {
     eventTitle: 'Quinceañera',
     eventStartsAt: eventDate.toISOString(),
@@ -170,6 +175,7 @@ function EventAppContent() {
         status: 'idle',
         message: '',
     });
+    const [featuredPhotos, setFeaturedPhotos] = useState(featuredPhotosInitialState);
     const { pushNotification } = useNotifications();
 
     useEffect(() => {
@@ -264,6 +270,37 @@ function EventAppContent() {
         };
 
         loadStats();
+
+        return () => controller.abort();
+    }, []);
+
+    useEffect(() => {
+        const controller = new AbortController();
+
+        const loadFeaturedPhotos = async () => {
+            try {
+                const response = await fetch('/api/gallery/photos', {
+                    signal: controller.signal,
+                    headers: {
+                        Accept: 'application/json',
+                    },
+                });
+
+                if (!response.ok) {
+                    return;
+                }
+
+                const payload = await response.json();
+                setFeaturedPhotos({
+                    count: Number(payload.data?.count ?? 0),
+                    photos: Array.isArray(payload.data?.photos) ? payload.data.photos : [],
+                });
+            } catch {
+                // Keep the carousel hidden if photos cannot be loaded.
+            }
+        };
+
+        loadFeaturedPhotos();
 
         return () => controller.abort();
     }, []);
@@ -806,7 +843,7 @@ function EventAppContent() {
                                 </div>
                             </div>
 
-                            <div className="mt-6 grid gap-4 lg:grid-cols-[1.05fr_0.95fr]">
+                            <div className="mt-6 grid gap-4 xl:grid-cols-[1.05fr_0.95fr]">
                                 <div className="space-y-4">
                                     {eventAgenda.map((item, index) => (
                                         <article key={item.time} className="flex gap-4 rounded-[1.5rem] border border-white/10 bg-white/5 p-4">
@@ -826,7 +863,7 @@ function EventAppContent() {
                                     ))}
                                 </div>
 
-                                <div className="space-y-4">
+                                <div className="grid gap-4">
                                     <article className="overflow-hidden rounded-[1.5rem] border border-white/10 bg-[radial-gradient(circle_at_top,rgba(125,211,252,0.16),transparent_40%),linear-gradient(180deg,rgba(15,23,42,0.95),rgba(2,6,23,0.95))] p-5">
                                         <p className="text-[11px] uppercase tracking-[0.35em] text-slate-400">Ubicación</p>
                                         <h4 className="mt-2 text-xl font-semibold text-white">Finca de Javier Mendoza</h4>
@@ -841,7 +878,7 @@ function EventAppContent() {
                                             <iframe
                                                 title={eventLocationLabel}
                                                 src={eventMapEmbedUrl}
-                                                className="h-64 w-full"
+                                                className="h-full min-h-[22rem] w-full"
                                                 loading="lazy"
                                                 referrerPolicy="no-referrer-when-downgrade"
                                             />
@@ -867,32 +904,34 @@ function EventAppContent() {
                                         </div>
                                     </article>
 
-                                    <article className="rounded-[1.5rem] border border-white/10 bg-white/5 p-5">
+                                    <div className="grid gap-4 sm:grid-cols-2">
+                                        <article className="h-full rounded-[1.5rem] border border-white/10 bg-white/5 p-5">
                                         <p className="text-[11px] uppercase tracking-[0.35em] text-slate-400">Código de vestimenta</p>
                                         <p className="mt-2 text-lg font-semibold text-white">Formal y colores claros</p>
                                         <p className="mt-2 text-sm leading-6 text-slate-300">
-                                            Queremos que te sientas cómodo y te veas bien en la foto. Para la fiesta preferimos un look formal y en colores claros.
+                                            Queremos que te sientas cómodo y te veas bien en la foto. Para la fiesta, ven formal y en colores claros.
                                         </p>
-                                    </article>
+                                        </article>
 
-                                    <article className="rounded-[1.5rem] border border-white/10 bg-white/5 p-5">
-                                        <p className="text-[11px] uppercase tracking-[0.35em] text-slate-400">Tips y notas</p>
-                                        <div className="mt-3 space-y-3">
+                                        <article className="h-full rounded-[1.5rem] border border-white/10 bg-white/5 p-5">
+                                            <p className="text-[11px] uppercase tracking-[0.35em] text-slate-400">Tips y notas</p>
+                                            <div className="mt-3 space-y-3">
                                             {eventNotes.map((item) => (
                                                 <div key={item} className="flex items-start gap-3 text-sm leading-6 text-slate-300">
                                                     <span className="mt-1 h-2.5 w-2.5 rounded-full bg-cyan-200" />
                                                     <p>{item}</p>
                                                 </div>
                                             ))}
-                                        </div>
-                                        <div className="mt-4 flex flex-wrap gap-2">
+                                            </div>
+                                            <div className="mt-4 flex flex-wrap gap-2">
                                             {eventReminders.map((item) => (
                                                 <span key={item} className="rounded-full border border-white/10 bg-slate-950/60 px-3 py-2 text-xs font-medium text-slate-200">
                                                     {item}
                                                 </span>
                                             ))}
-                                        </div>
-                                    </article>
+                                            </div>
+                                        </article>
+                                    </div>
                                 </div>
                             </div>
 
@@ -901,7 +940,7 @@ function EventAppContent() {
                                     <p className="text-[11px] uppercase tracking-[0.35em] text-slate-400">Álbum de momentos</p>
                                     <h4 className="mt-2 text-xl font-semibold text-white">{eventStats.albumPhotosCount} fotos compartidas</h4>
                                     <p className="mt-2 text-sm leading-6 text-slate-300">
-                                        Sube tus mejores momentos y mira el álbum completo en una página aparte para no cargar de más este inicio.
+                                        Sube tus mejores momentos y mira el álbum completo en una página aparte, más cómoda y con más espacio.
                                     </p>
                                     <div className="mt-4 grid gap-3 sm:grid-cols-2">
                                         <div className="rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-4">
@@ -927,7 +966,7 @@ function EventAppContent() {
                                     <p className="text-[11px] uppercase tracking-[0.35em] text-slate-400">Canciones para el DJ</p>
                                     <h4 className="mt-2 text-xl font-semibold text-white">{eventStats.songRequestsCount} canciones guardadas</h4>
                                     <p className="mt-2 text-sm leading-6 text-slate-300">
-                                        Las sugerencias quedan en la base de datos y luego se exportan en PDF para el DJ.
+                                        Guarda tu canción favorita para que luego se la pasemos al DJ en una lista sencilla.
                                     </p>
 
                                     <form className="mt-4 space-y-3" onSubmit={handleSongSubmit}>
@@ -979,6 +1018,40 @@ function EventAppContent() {
                                     </div>
                                 </article>
                             </div>
+
+                            <section className="mt-6 min-w-0 rounded-[1.75rem] border border-white/10 bg-white/5 p-5">
+                                <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+                                    <div>
+                                        <p className="text-[11px] uppercase tracking-[0.35em] text-slate-400">Cierre visual</p>
+                                        <h4 className="mt-2 text-2xl font-semibold text-white">{featuredPhotos.count} fotos de la quinceañera</h4>
+                                        <p className="mt-2 text-sm leading-6 text-slate-300">Un carrusel automático con las fotos principales para cerrar la invitación con estilo.</p>
+                                    </div>
+                                    <a href="/album" className="inline-flex items-center justify-center rounded-2xl border border-white/10 bg-slate-950/55 px-4 py-3 text-sm font-medium text-white transition hover:bg-white/10">
+                                        Ver álbum completo
+                                    </a>
+                                </div>
+
+                                <div className="mt-5 w-full max-w-full overflow-hidden rounded-[1.5rem] border border-white/10 bg-slate-950/70 p-3">
+                                    {featuredPhotos.photos.length ? (
+                                        <div className="relative h-[clamp(15rem,34vw,22rem)] w-full overflow-hidden rounded-[1.25rem]">
+                                            <div className="marquee-track absolute inset-y-0 left-0 flex gap-4 px-0 pr-4">
+                                                {[...featuredPhotos.photos, ...featuredPhotos.photos].map((photo, index) => (
+                                                    <article key={`${photo.id}-${index}`} className="group relative h-full aspect-[3/4] w-[clamp(11rem,28vw,16rem)] shrink-0 overflow-hidden rounded-[1.5rem] border border-white/10 bg-slate-900/80 sm:w-[clamp(12rem,22vw,18rem)]">
+                                                        <img src={photo.photo_url} alt="Foto de la quinceañera" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+                                                        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/90 via-slate-950/35 to-transparent p-4">
+                                                            <p className="text-xs uppercase tracking-[0.3em] text-slate-300">Quinceañera</p>
+                                                        </div>
+                                                    </article>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="flex min-h-72 items-center justify-center rounded-[1.25rem] border border-dashed border-white/10 bg-white/5 text-sm text-slate-400">
+                                            Todavía no hay fotos cargadas para el carrusel final.
+                                        </div>
+                                    )}
+                                </div>
+                            </section>
                         </section>
                     ) : (
                         <section className="rounded-[2rem] border border-white/10 bg-slate-950/65 p-6 shadow-2xl shadow-slate-950/50 backdrop-blur-xl xl:col-span-2">
