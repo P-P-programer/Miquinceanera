@@ -33,6 +33,10 @@ jobs:
         run: |
           pnpm install --frozen-lockfile
           pnpm run build
+          echo "Built assets:"
+          ls -la public/build || true
+          find public/build -maxdepth 2 -type f | sort | head -100 || true
+          test -f public/build/manifest.json
 
       - name: Preflight SSH connectivity
         run: |
@@ -50,9 +54,9 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           port: ${{ secrets.SSH_PORT }}
           key: ${{ secrets.SSH_DEPLOY_PRIVATE_KEY }}
-          source: "public/build/*"
+          source: "public/build"
           target: "/home/u633781435/domains/losquincedevale.site/public_html/build-new/"
-          strip_components: 2
+          strip_components: 1
 
       - name: Atomic swap build folders
         uses: appleboy/ssh-action@v1.0.3
