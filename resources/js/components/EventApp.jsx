@@ -714,10 +714,10 @@ function EventAppContent() {
                     </div>
                 </header>
 
-                <main className="grid flex-1 gap-6 xl:grid-cols-[1.45fr_0.95fr]">
+                <main className="grid flex-1 gap-6 xl:grid-cols-[1.2fr_0.8fr] 2xl:grid-cols-[1.15fr_0.85fr]">
                     <section className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-[linear-gradient(135deg,rgba(2,6,23,0.96),rgba(15,23,42,0.9)_42%,rgba(148,163,184,0.12))] p-8 shadow-2xl shadow-slate-950/50">
                         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(226,232,240,0.16),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(125,211,252,0.12),transparent_30%)]" />
-                        <div className="relative grid gap-10 lg:grid-cols-[1.1fr_0.9fr]">
+                        <div className="relative grid gap-8 lg:grid-cols-[1fr_0.88fr] xl:gap-10">
                             <div className="space-y-6">
                                 <span className="inline-flex items-center rounded-full border border-cyan-200/20 bg-cyan-300/10 px-4 py-2 text-xs uppercase tracking-[0.3em] text-cyan-200">
                                     New York night mood
@@ -1196,7 +1196,16 @@ function EventAppContent() {
                                             : 'border-cyan-300/20 bg-cyan-300/10 text-cyan-100'
                                 }`}
                             >
-                                {submissionState.message}
+                                <p>{submissionState.message}</p>
+                                {submissionState.status === 'success' && submissionState.registration ? (
+                                    <button
+                                        type="button"
+                                        className="mt-3 inline-flex rounded-2xl border border-white/10 bg-white/10 px-4 py-2 text-xs font-medium uppercase tracking-[0.28em] text-white transition hover:bg-white/15"
+                                        onClick={scrollToEventDetails}
+                                    >
+                                        Ver detalles del evento
+                                    </button>
+                                ) : null}
                             </div>
                         ) : null}
 
@@ -1262,6 +1271,13 @@ function EventAppContent() {
                                         Descargar PNG
                                     </button>
                                 </div>
+                                <button
+                                    type="button"
+                                    className="mt-4 w-full rounded-2xl border border-cyan-300/20 bg-cyan-300/10 px-4 py-3 text-sm font-medium text-cyan-100 transition hover:bg-cyan-300/20"
+                                    onClick={scrollToEventDetails}
+                                >
+                                    Ver detalles del evento
+                                </button>
                                 <button
                                     type="button"
                                     className="mt-4 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-medium text-white transition hover:bg-white/10"
