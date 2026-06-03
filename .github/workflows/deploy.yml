@@ -34,6 +34,15 @@ jobs:
           pnpm install --frozen-lockfile
           pnpm run build
 
+      - name: Preflight SSH connectivity
+        run: |
+          set -euo pipefail
+          echo "Checking SSH target reachability..."
+          if command -v getent >/dev/null 2>&1; then
+            getent hosts "${{ secrets.SSH_HOST }}" || true
+          fi
+          nc -vz -w 10 "${{ secrets.SSH_HOST }}" "${{ secrets.SSH_PORT }}"
+
       - name: Upload build to temp folder
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -67,6 +76,15 @@ jobs:
     needs: build-frontend
 
     steps:
+      - name: Preflight SSH connectivity
+        run: |
+          set -euo pipefail
+          echo "Checking SSH target reachability..."
+          if command -v getent >/dev/null 2>&1; then
+            getent hosts "${{ secrets.SSH_HOST }}" || true
+          fi
+          nc -vz -w 10 "${{ secrets.SSH_HOST }}" "${{ secrets.SSH_PORT }}"
+
       - name: Deploy backend via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
