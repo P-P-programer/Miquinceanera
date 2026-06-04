@@ -715,7 +715,7 @@ function EventAppContent() {
                 </header>
 
                 <main className="grid flex-1 gap-6 xl:grid-cols-[1.2fr_0.8fr] 2xl:grid-cols-[1.15fr_0.85fr]">
-                    <section className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-[linear-gradient(135deg,rgba(2,6,23,0.96),rgba(15,23,42,0.9)_42%,rgba(148,163,184,0.12))] p-8 shadow-2xl shadow-slate-950/50">
+                    <section className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-[linear-gradient(135deg,rgba(2,6,23,0.72),rgba(15,23,42,0.62)_42%,rgba(148,163,184,0.06))] p-8 shadow-2xl shadow-slate-950/50 backdrop-blur-md">
                         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(226,232,240,0.16),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(125,211,252,0.12),transparent_30%)]" />
                         <div className="relative grid gap-8 lg:grid-cols-[1fr_0.88fr] xl:gap-10">
                             <div className="space-y-6">
@@ -829,7 +829,7 @@ function EventAppContent() {
                     </section>
 
                     {canViewPrivateDetails ? (
-                        <section id="event-details" className="rounded-[2rem] border border-white/10 bg-slate-950/65 p-6 shadow-2xl shadow-slate-950/50 backdrop-blur-xl xl:col-span-2">
+                        <section id="event-details" className="rounded-[2rem] border border-white/10 bg-slate-950/40 p-6 shadow-2xl shadow-slate-950/30 backdrop-blur-md xl:col-span-2">
                             <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
                                 <div>
                                     <p className="text-[11px] uppercase tracking-[0.35em] text-slate-400">Módulo privado</p>
@@ -1054,7 +1054,7 @@ function EventAppContent() {
                             </section>
                         </section>
                     ) : (
-                        <section className="rounded-[2rem] border border-white/10 bg-slate-950/65 p-6 shadow-2xl shadow-slate-950/50 backdrop-blur-xl xl:col-span-2">
+                        <section className="rounded-[2rem] border border-white/10 bg-slate-950/40 p-6 shadow-2xl shadow-slate-950/30 backdrop-blur-md xl:col-span-2">
                             <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
                                 <div>
                                     <p className="text-[11px] uppercase tracking-[0.35em] text-slate-400">Módulo privado</p>
@@ -1090,7 +1090,7 @@ function EventAppContent() {
                         </section>
                     )}
 
-                    <aside className="space-y-6 rounded-[2rem] border border-white/10 bg-slate-950/70 p-6 shadow-2xl shadow-slate-950/50 backdrop-blur-xl">
+                    <aside className="space-y-6 rounded-[2rem] border border-white/10 bg-slate-950/40 p-6 shadow-2xl shadow-slate-950/30 backdrop-blur-md">
                         <div>
                             <p className="text-[11px] uppercase tracking-[0.35em] text-slate-400">{hasRegistration ? 'Tu acceso' : 'Registro'}</p>
                             <h3 className="mt-2 text-2xl font-semibold text-white">

@@ -197,7 +197,7 @@ function AlbumAppShell() {
     return (
         <div className="min-h-screen text-slate-100">
             <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-8 px-6 py-6 lg:px-10">
-                <header className="flex flex-col gap-4 rounded-[2rem] border border-white/10 bg-white/5 p-6 backdrop-blur-xl lg:flex-row lg:items-center lg:justify-between">
+                <header className="flex flex-col gap-4 rounded-[2rem] border border-white/10 bg-white/5 p-6 backdrop-blur-md lg:flex-row lg:items-center lg:justify-between">
                     <div>
                         <p className="text-[11px] uppercase tracking-[0.4em] text-slate-400">Miquinceañera</p>
                         <h1 className="mt-2 text-4xl font-semibold text-white">Álbum de momentos</h1>
@@ -229,7 +229,7 @@ function AlbumAppShell() {
                 </section>
 
                 {!accessCode ? (
-                    <section className="rounded-[2rem] border border-white/10 bg-slate-950/70 p-6 backdrop-blur-xl">
+                    <section className="rounded-[2rem] border border-white/10 bg-slate-950/40 p-6 backdrop-blur-md">
                         <p className="text-[11px] uppercase tracking-[0.35em] text-slate-400">Validar acceso</p>
                         <h2 className="mt-2 text-2xl font-semibold text-white">Ingresa tu código para abrir el álbum</h2>
                         <form className="mt-4 flex flex-col gap-3 sm:flex-row" onSubmit={handleAccessCodeSubmit}>
@@ -247,7 +247,7 @@ function AlbumAppShell() {
                 ) : null}
 
                 <section id="upload" className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
-                    <article className="rounded-[2rem] border border-white/10 bg-white/5 p-6 backdrop-blur-xl">
+                    <article className="rounded-[2rem] border border-white/10 bg-white/5 p-6 backdrop-blur-md">
                         <p className="text-[11px] uppercase tracking-[0.35em] text-slate-400">Subir momento</p>
                         <h2 className="mt-2 text-2xl font-semibold text-white">Comparte una foto</h2>
                         <p className="mt-2 text-sm leading-6 text-slate-300">La foto se guarda de forma optimizada cuando se puede, para que el álbum abra rápido y se vea bien.</p>
@@ -283,7 +283,7 @@ function AlbumAppShell() {
                         ) : null}
                     </article>
 
-                    <article className="rounded-[2rem] border border-white/10 bg-slate-950/70 p-6 backdrop-blur-xl">
+                    <article className="rounded-[2rem] border border-white/10 bg-slate-950/40 p-6 backdrop-blur-md">
                         <div className="flex items-end justify-between gap-4">
                             <div>
                                 <p className="text-[11px] uppercase tracking-[0.35em] text-slate-400">Galería</p>

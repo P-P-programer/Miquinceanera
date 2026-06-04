@@ -25,11 +25,72 @@ html {
 body {
     min-height: 100vh;
     background:
-        radial-gradient(circle at top, rgba(148, 163, 184, 0.16), transparent 38%),
-        radial-gradient(circle at 20% 20%, rgba(125, 211, 252, 0.12), transparent 24%),
-        linear-gradient(180deg, #030712 0%, #07111f 42%, #0f172a 100%);
+        radial-gradient(circle at top, rgba(255, 255, 255, 0.14), transparent 32%),
+        radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.12), transparent 26%),
+        linear-gradient(180deg, #176bbf 0%, #1f75c5 44%, #0f5ca4 100%);
     color: var(--miquin-ink);
     font-family: var(--font-sans);
+}
+
+/* ── Stars layer ─────────────────────────────────────────── */
+#stars-canvas {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+#app {
+    position: relative;
+    z-index: 1;
+}
+
+/* Individual star twinkle animations (4 offsets for variety) */
+@keyframes star-twinkle-a {
+    0%, 100% { opacity: 0.85; transform: scale(1); }
+    50%       { opacity: 0.25; transform: scale(0.7); }
+}
+@keyframes star-twinkle-b {
+    0%, 100% { opacity: 0.6;  transform: scale(0.9); }
+    40%       { opacity: 1;   transform: scale(1.15); }
+    80%       { opacity: 0.3; transform: scale(0.75); }
+}
+@keyframes star-twinkle-c {
+    0%, 100% { opacity: 1;   transform: scale(1.1); }
+    60%       { opacity: 0.2; transform: scale(0.65); }
+}
+@keyframes star-twinkle-d {
+    0%, 100% { opacity: 0.4; transform: scale(0.8); }
+    30%       { opacity: 0.9; transform: scale(1.2); }
+    70%       { opacity: 0.5; transform: scale(0.9); }
+}
+
+.star {
+    position: fixed;
+    pointer-events: none;
+    z-index: 0;
+    will-change: opacity, transform;
+    transform-origin: center center;
+}
+.star-a { animation: star-twinkle-a var(--dur, 3s) ease-in-out infinite; animation-delay: var(--del, 0s); }
+.star-b { animation: star-twinkle-b var(--dur, 4s) ease-in-out infinite; animation-delay: var(--del, 0s); }
+.star-c { animation: star-twinkle-c var(--dur, 5s) ease-in-out infinite; animation-delay: var(--del, 0s); }
+.star-d { animation: star-twinkle-d var(--dur, 3.5s) ease-in-out infinite; animation-delay: var(--del, 0s); }
+
+/* Slow drift for a handful of stars */
+@keyframes star-drift {
+    0%   { transform: translate(0, 0) scale(var(--sc, 1)); }
+    33%  { transform: translate(3px, -4px) scale(var(--sc, 1)); }
+    66%  { transform: translate(-2px, 2px) scale(var(--sc, 1)); }
+    100% { transform: translate(0, 0) scale(var(--sc, 1)); }
+}
+.star-drift {
+    animation:
+        star-twinkle-b var(--dur, 4s) ease-in-out infinite,
+        star-drift calc(var(--dur, 4s) * 2.5) ease-in-out infinite;
+    animation-delay: var(--del, 0s), var(--del2, 0s);
 }
 
 ::selection {
