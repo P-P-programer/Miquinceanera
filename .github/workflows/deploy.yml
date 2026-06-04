@@ -113,11 +113,6 @@ jobs:
             php artisan route:cache
             php artisan view:cache
 
-            mkdir -p "$WEBROOT"
-            mkdir -p "$WEBROOT/build"
-            rm -rf "$WEBROOT/build"/*
-            cp -a "$APP_DIR/public/build/." "$WEBROOT/build/"
-
             rm -rf "$WEBROOT/storage"
             ln -sfn "$APP_DIR/storage/app/public" "$WEBROOT/storage"
 
@@ -150,4 +145,4 @@ jobs:
                 '$app->handleRequest(Request::capture());' > "$WEBROOT/index.php"
             fi
 
-            echo "Deploy backend + sync frontend completado"
+            echo "Deploy backend completado"
