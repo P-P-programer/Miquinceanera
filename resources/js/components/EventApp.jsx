@@ -1052,6 +1052,39 @@ function EventAppContent() {
                                     )}
                                 </div>
                             </section>
+
+                            <section className="mt-6 min-w-0 rounded-[1.75rem] border border-white/10 bg-white/5 p-5">
+                                <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:gap-8">
+                                    <div className="flex shrink-0 items-center justify-center rounded-[1.5rem] border border-cyan-300/20 bg-cyan-300/10 p-5 lg:p-6">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" className="text-cyan-100" viewBox="0 0 16 16">
+                                            <path d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414zM0 4.697v7.104l5.803-3.558zM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586zm3.436-.586L16 11.801V4.697z"/>
+                                        </svg>
+                                    </div>
+                                    <div className="flex-1 space-y-3">
+                                        <div>
+                                            <p className="text-[11px] uppercase tracking-[0.35em] text-slate-400">Tradición especial</p>
+                                            <h4 className="mt-2 text-2xl font-semibold text-white">Lluvia de sobres</h4>
+                                            <p className="mt-2 text-sm leading-6 text-slate-300">
+                                                Como parte de la celebración habrá una lluvia de sobres. Cada grupo de invitados entrega un sobre — es la forma más bonita de acompañar a la quinceañera en este momento tan especial.
+                                            </p>
+                                        </div>
+                                        <div className="grid gap-3 sm:grid-cols-3">
+                                            <div className="rounded-2xl border border-white/10 bg-slate-950/55 px-4 py-3">
+                                                <p className="text-[11px] uppercase tracking-[0.3em] text-slate-400">¿Quién entrega?</p>
+                                                <p className="mt-1 text-sm font-medium text-white">Un sobre por grupo</p>
+                                            </div>
+                                            <div className="rounded-2xl border border-white/10 bg-slate-950/55 px-4 py-3">
+                                                <p className="text-[11px] uppercase tracking-[0.3em] text-slate-400">¿Cuándo?</p>
+                                                <p className="mt-1 text-sm font-medium text-white">Durante la fiesta</p>
+                                            </div>
+                                            <div className="rounded-2xl border border-white/10 bg-slate-950/55 px-4 py-3">
+                                                <p className="text-[11px] uppercase tracking-[0.3em] text-slate-400">¿A quién?</p>
+                                                <p className="mt-1 text-sm font-medium text-white">Directamente a la quinceañera</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
                         </section>
                     ) : (
                         <section className="rounded-[2rem] border border-white/10 bg-slate-950/40 p-6 shadow-2xl shadow-slate-950/30 backdrop-blur-md xl:col-span-2">
