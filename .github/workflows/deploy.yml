@@ -56,7 +56,7 @@ jobs:
           key: ${{ secrets.SSH_DEPLOY_PRIVATE_KEY }}
           source: "public/build"
           target: "/home/u633781435/domains/losquincedevale.site/public_html/build-new/"
-          strip_components: 1
+          strip_components: 2
 
       - name: Atomic swap build folders
         uses: appleboy/ssh-action@v1.0.3
@@ -116,6 +116,11 @@ jobs:
             rm -rf "$WEBROOT/storage"
             ln -sfn "$APP_DIR/storage/app/public" "$WEBROOT/storage"
 
+            # Sincronizar build hacia public/ de Laravel para que Vite lo encuentre
+            mkdir -p "$APP_DIR/public/build"
+            rm -rf "$APP_DIR/public/build"
+            cp -a "$WEBROOT/build/." "$APP_DIR/public/build/"
+
             printf '%s\n' \
               '<IfModule mod_rewrite.c>' \
               '    RewriteEngine On' \
@@ -145,4 +150,4 @@ jobs:
                 '$app->handleRequest(Request::capture());' > "$WEBROOT/index.php"
             fi
 
-            echo "Deploy backend completado"
+            echo "Deploy backend + sync build completado"
