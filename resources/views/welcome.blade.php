@@ -15,8 +15,21 @@
         @endif
     </head>
     <body>
+        <!-- Fondo: fotos con desplazamiento automático en bucle -->
+        <div class="bg-scroll-photos" aria-hidden="true">
+            <div class="bg-scroll-photos__strip">
+                <img src="/fondo/1.webp" alt="" loading="eager" />
+                <img src="/fondo/2.webp" alt="" loading="lazy" />
+                <img src="/fondo/3.webp" alt="" loading="lazy" />
+                <img src="/fondo/4.webp" alt="" loading="lazy" />
+                <!-- Primera foto repetida para cerrar el bucle sin salto -->
+                <img src="/fondo/1.webp" alt="" loading="lazy" />
+            </div>
+        </div>
+
         <div id="app"></div>
 
+        <!-- Estrellas dispersas con parpadeo -->
         <script>
             (function () {
                 const STAR_COUNT  = 90;

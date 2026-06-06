@@ -701,52 +701,52 @@ function EventAppContent() {
         : 'Ya se cerraron los cupos. Si ya te inscribiste, puedes seguir viendo los detalles con tu código y te esperamos en la fiesta.';
 
     return (
-        <div className="min-h-screen text-slate-100">
+        <div className="min-h-screen text-white">
             <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-8 px-6 py-6 lg:px-10">
-                <header className="flex items-center justify-between rounded-full border border-white/10 bg-white/5 px-5 py-3 backdrop-blur-xl">
+                <header className="flex items-center justify-between rounded-full border border-[#FCD2AB]/20 bg-[#FCD2AB]/8 px-5 py-3 backdrop-blur-xl">
                     <div>
-                        <p className="text-[11px] uppercase tracking-[0.4em] text-slate-400">Miquinceañera</p>
+                        <p className="text-[11px] uppercase tracking-[0.4em] text-[#ABD5FC]/70">Miquinceañera</p>
                         <h1 className="text-lg font-semibold text-white">Invitación digital</h1>
                     </div>
-                    <div className="rounded-full border border-slate-200/10 bg-slate-950/60 px-4 py-2 text-right">
-                        <p className="text-[11px] uppercase tracking-[0.3em] text-slate-400">Evento</p>
-                        <p className="text-sm font-medium text-slate-100">{eventStats.eventTitle} · 4 de julio de 2026 · 7:00 PM</p>
+                    <div className="rounded-full border border-[#FCD2AB]/20 bg-[#FCD2AB]/8 px-4 py-2 text-right">
+                        <p className="text-[11px] uppercase tracking-[0.3em] text-[#ABD5FC]/70">Evento</p>
+                        <p className="text-sm font-medium text-white">{eventStats.eventTitle} · 4 de julio de 2026 · 7:00 PM</p>
                     </div>
                 </header>
 
                 <main className="grid flex-1 gap-6 xl:grid-cols-[1.2fr_0.8fr] 2xl:grid-cols-[1.15fr_0.85fr]">
-                    <section className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-[linear-gradient(135deg,rgba(2,6,23,0.72),rgba(15,23,42,0.62)_42%,rgba(148,163,184,0.06))] p-8 shadow-2xl shadow-slate-950/50 backdrop-blur-md">
+                    <section className="relative overflow-hidden rounded-[2rem] border border-[#FCD2AB]/20 bg-[linear-gradient(135deg,rgba(2,6,23,0.72),rgba(15,23,42,0.62)_42%,rgba(148,163,184,0.06))] p-8 shadow-2xl shadow-black/40 backdrop-blur-md">
                         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(226,232,240,0.16),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(125,211,252,0.12),transparent_30%)]" />
                         <div className="relative grid gap-8 lg:grid-cols-[1fr_0.88fr] xl:gap-10">
                             <div className="space-y-6">
-                                <span className="inline-flex items-center rounded-full border border-cyan-200/20 bg-cyan-300/10 px-4 py-2 text-xs uppercase tracking-[0.3em] text-cyan-200">
+                                <span className="inline-flex items-center rounded-full border border-[#ABD5FC]/20 bg-[#FCD2AB]/10 px-4 py-2 text-xs uppercase tracking-[0.3em] text-[#ABD5FC]">
                                     New York night mood
                                 </span>
                                 <div className="space-y-4">
-                                    <p className="text-sm uppercase tracking-[0.4em] text-slate-400">Cuenta regresiva</p>
+                                    <p className="text-sm uppercase tracking-[0.4em] text-[#ABD5FC]/70">Cuenta regresiva</p>
                                     <div className="max-w-2xl">
                                         <h2 className="text-4xl font-semibold leading-tight text-white lg:text-6xl">
                                             Una noche elegante para celebrar tus quince años.
                                         </h2>
                                     </div>
-                                    <p className="max-w-xl text-base leading-7 text-slate-300 lg:text-lg">
+                                    <p className="max-w-xl text-base leading-7 text-white/75 lg:text-lg">
                                         Registro por grupo, QR único, acceso privado a los detalles del evento y control total de cupos para la fiesta.
                                     </p>
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                                     {Object.entries(countdown).map(([label, value]) => (
-                                        <div key={label} className="rounded-2xl border border-white/10 bg-white/5 px-4 py-5 text-center backdrop-blur-md">
+                                        <div key={label} className="rounded-2xl border border-[#FCD2AB]/20 bg-[#FCD2AB]/8 px-4 py-5 text-center backdrop-blur-md">
                                             <div className="text-3xl font-semibold text-white">{formatNumber(value)}</div>
-                                            <div className="mt-1 text-xs uppercase tracking-[0.3em] text-slate-400">{label}</div>
+                                            <div className="mt-1 text-xs uppercase tracking-[0.3em] text-[#ABD5FC]/70">{label}</div>
                                         </div>
                                     ))}
                                 </div>
 
                                 <div className="grid gap-3 sm:grid-cols-3">
                                     {metrics.map((item) => (
-                                        <div key={item.label} className="rounded-2xl border border-white/10 bg-slate-950/60 p-4">
-                                            <p className="text-sm text-slate-400">{item.label}</p>
+                                        <div key={item.label} className="rounded-2xl border border-[#FCD2AB]/20 bg-[#FCD2AB]/8 p-4">
+                                            <p className="text-sm text-[#ABD5FC]/70">{item.label}</p>
                                             <p className="mt-2 text-2xl font-semibold text-white">{item.value}</p>
                                         </div>
                                     ))}
@@ -755,26 +755,26 @@ function EventAppContent() {
 
                             <div className="space-y-4">
                                 {activeRegistration ? (
-                                    <div className="rounded-[1.75rem] border border-cyan-300/20 bg-cyan-300/10 p-5 backdrop-blur-xl">
-                                        <p className="text-[11px] uppercase tracking-[0.35em] text-cyan-100/80">Invitado confirmado</p>
+                                    <div className="rounded-[1.75rem] border border-[#FCD2AB]/20 bg-[#FCD2AB]/10 p-5 backdrop-blur-xl">
+                                        <p className="text-[11px] uppercase tracking-[0.35em] text-[#FCD2AB]/80">Invitado confirmado</p>
                                         <h3 className="mt-2 text-2xl font-semibold text-white">Tu registro ya está listo</h3>
-                                        <p className="mt-2 text-sm leading-6 text-cyan-50/90">
+                                        <p className="mt-2 text-sm leading-6 text-white/90/90">
                                             Este acceso ya quedó guardado. Puedes volver a abrir tu QR y bajar a los detalles del evento cuando quieras.
                                         </p>
-                                        <div className="mt-4 flex items-center gap-4 rounded-2xl border border-white/10 bg-slate-950/55 p-4">
+                                        <div className="mt-4 flex items-center gap-4 rounded-2xl border border-[#FCD2AB]/20 bg-[#FCD2AB]/8 p-4">
                                             <img
                                                 alt="Código QR de registro"
-                                                className="h-20 w-20 rounded-xl border border-white/10 bg-white p-2"
+                                                className="h-20 w-20 rounded-xl border border-[#FCD2AB]/20 bg-white p-2"
                                                 src={activeRegistration.qr_image_url}
                                             />
                                             <div className="min-w-0 flex-1">
-                                                <p className="text-[11px] uppercase tracking-[0.3em] text-slate-400">Código de acceso</p>
+                                                <p className="text-[11px] uppercase tracking-[0.3em] text-[#ABD5FC]/70">Código de acceso</p>
                                                 <p className="mt-1 break-all text-base font-semibold tracking-[0.2em] text-white">
                                                     {activeRegistration.access_code}
                                                 </p>
                                                 <button
                                                     type="button"
-                                                    className="mt-3 inline-flex rounded-2xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/10"
+                                                    className="mt-3 inline-flex rounded-2xl border border-[#FCD2AB]/20 bg-[#FCD2AB]/8 px-4 py-2 text-sm font-medium text-white transition hover:bg-[#FCD2AB]/12"
                                                     onClick={scrollToEventDetails}
                                                 >
                                                     Ver detalles del evento
@@ -784,41 +784,41 @@ function EventAppContent() {
                                     </div>
                                 ) : null}
 
-                                <div className="rounded-[1.75rem] border border-white/10 bg-slate-950/70 p-5 backdrop-blur-xl">
-                                    <p className="text-[11px] uppercase tracking-[0.35em] text-slate-400">Estado del acceso</p>
+                                <div className="rounded-[1.75rem] border border-[#FCD2AB]/20 bg-[#FCD2AB]/10 p-5 backdrop-blur-xl">
+                                    <p className="text-[11px] uppercase tracking-[0.35em] text-[#ABD5FC]/70">Estado del acceso</p>
                                     <div className="mt-3 flex items-end justify-between gap-4">
                                         <div>
                                             <p className="text-3xl font-semibold text-white">{eventStats.availableSeats}</p>
-                                            <p className="text-sm text-slate-400">cupos disponibles de {eventStats.totalCapacity}</p>
+                                            <p className="text-sm text-[#ABD5FC]/70">cupos disponibles de {eventStats.totalCapacity}</p>
                                         </div>
                                                 <span className={`rounded-full px-3 py-1 text-xs font-medium ${eventStats.registrationOpen ? 'border border-emerald-300/20 bg-emerald-300/10 text-emerald-200' : 'border border-rose-300/20 bg-rose-300/10 text-rose-200'}`}>
                                                     {eventStats.registrationOpen ? 'Registro abierto' : 'Registro cerrado'}
                                                 </span>
                                     </div>
-                                    <div className="mt-5 h-2 overflow-hidden rounded-full bg-white/10">
+                                    <div className="mt-5 h-2 overflow-hidden rounded-full bg-[#FCD2AB]/12">
                                         <div
-                                            className="h-full rounded-full bg-gradient-to-r from-slate-200 via-cyan-200 to-slate-400"
+                                            className="h-full rounded-full bg-gradient-to-r from-[#FCD2AB] via-[#ABD5FC] to-[#FCD2AB]"
                                             style={{ width: `${Math.max(eventStats.totalCapacity > 0 ? ((eventStats.totalCapacity - eventStats.availableSeats) / eventStats.totalCapacity) * 100 : 0, 8)}%` }}
                                         />
                                     </div>
                                 </div>
 
-                                <div className="rounded-[1.75rem] border border-white/10 bg-white/5 p-5 backdrop-blur-xl">
-                                    <p className="text-[11px] uppercase tracking-[0.35em] text-slate-400">Detalles del evento</p>
-                                    <div className={`mt-3 rounded-2xl border px-4 py-4 text-sm leading-6 ${eventStats.registrationOpen ? 'border-cyan-300/20 bg-cyan-300/10 text-cyan-50' : 'border-emerald-300/20 bg-emerald-300/10 text-emerald-50'}`}>
+                                <div className="rounded-[1.75rem] border border-[#FCD2AB]/20 bg-[#FCD2AB]/8 p-5 backdrop-blur-xl">
+                                    <p className="text-[11px] uppercase tracking-[0.35em] text-[#ABD5FC]/70">Detalles del evento</p>
+                                    <div className={`mt-3 rounded-2xl border px-4 py-4 text-sm leading-6 ${eventStats.registrationOpen ? 'border-[#FCD2AB]/20 bg-[#FCD2AB]/10 text-white/90' : 'border-emerald-300/20 bg-emerald-300/10 text-emerald-50'}`}>
                                         {closedMessage}
                                     </div>
                                     <div className="mt-4 grid gap-2">
                                         {eventDetails.map((item) => (
-                                            <div key={item.label} className="flex items-start justify-between gap-4 rounded-2xl border border-white/8 bg-slate-950/55 px-4 py-3 text-sm text-slate-300">
-                                                <span className="text-slate-400">{item.label}</span>
+                                            <div key={item.label} className="flex items-start justify-between gap-4 rounded-2xl border border-[#FCD2AB]/15 bg-[#FCD2AB]/8 px-4 py-3 text-sm text-white/75">
+                                                <span className="text-[#ABD5FC]/70">{item.label}</span>
                                                 <span className="text-right font-medium text-white">{item.value}</span>
                                             </div>
                                         ))}
                                     </div>
                                     <div className="mt-4 flex flex-wrap gap-2">
                                         {eventHighlights.map((item) => (
-                                            <span key={item} className="rounded-full border border-white/10 bg-white/5 px-3 py-2 text-xs font-medium text-slate-200">
+                                            <span key={item} className="rounded-full border border-[#FCD2AB]/20 bg-[#FCD2AB]/8 px-3 py-2 text-xs font-medium text-white/90">
                                                 {item}
                                             </span>
                                         ))}
@@ -829,16 +829,16 @@ function EventAppContent() {
                     </section>
 
                     {canViewPrivateDetails ? (
-                        <section id="event-details" className="rounded-[2rem] border border-white/10 bg-slate-950/40 p-6 shadow-2xl shadow-slate-950/30 backdrop-blur-md xl:col-span-2">
+                        <section id="event-details" className="rounded-[2rem] border border-[#FCD2AB]/20 bg-[#FCD2AB]/8 p-6 shadow-2xl shadow-black/25 backdrop-blur-md xl:col-span-2">
                             <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
                                 <div>
-                                    <p className="text-[11px] uppercase tracking-[0.35em] text-slate-400">Módulo privado</p>
+                                    <p className="text-[11px] uppercase tracking-[0.35em] text-[#ABD5FC]/70">Módulo privado</p>
                                     <h3 className="mt-2 text-2xl font-semibold text-white">Detalles del evento</h3>
-                                    <p className="mt-2 text-sm leading-6 text-slate-300">
+                                    <p className="mt-2 text-sm leading-6 text-white/75">
                                         Esta sección se desbloquea cuando ya tienes un registro activo o vuelves a entrar con tu código.
                                     </p>
                                 </div>
-                                <div className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-4 py-2 text-xs font-medium uppercase tracking-[0.3em] text-cyan-100">
+                                <div className="rounded-full border border-[#FCD2AB]/20 bg-[#FCD2AB]/10 px-4 py-2 text-xs font-medium uppercase tracking-[0.3em] text-[#FCD2AB]">
                                     Acceso confirmado
                                 </div>
                             </div>
@@ -846,17 +846,17 @@ function EventAppContent() {
                             <div className="mt-6 grid gap-4 xl:grid-cols-[1.05fr_0.95fr]">
                                 <div className="space-y-4">
                                     {eventAgenda.map((item, index) => (
-                                        <article key={item.time} className="flex gap-4 rounded-[1.5rem] border border-white/10 bg-white/5 p-4">
-                                            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-300/10 text-center text-xs font-semibold uppercase tracking-[0.25em] text-cyan-100">
+                                        <article key={item.time} className="flex gap-4 rounded-[1.5rem] border border-[#FCD2AB]/20 bg-[#FCD2AB]/8 p-4">
+                                            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-[#FCD2AB]/20 bg-[#FCD2AB]/10 text-center text-xs font-semibold uppercase tracking-[0.25em] text-[#FCD2AB]">
                                                 {item.time}
                                             </div>
                                             <div className="min-w-0 flex-1">
                                                 <div className="flex items-start justify-between gap-3">
                                                     <div>
                                                         <p className="text-sm font-semibold text-white">{item.title}</p>
-                                                        <p className="mt-1 text-sm leading-6 text-slate-300">{item.description}</p>
+                                                        <p className="mt-1 text-sm leading-6 text-white/75">{item.description}</p>
                                                     </div>
-                                                    <span className="text-[11px] uppercase tracking-[0.3em] text-slate-500">0{index + 1}</span>
+                                                    <span className="text-[11px] uppercase tracking-[0.3em] text-[#ABD5FC]/50">0{index + 1}</span>
                                                 </div>
                                             </div>
                                         </article>
@@ -864,17 +864,17 @@ function EventAppContent() {
                                 </div>
 
                                 <div className="grid gap-4">
-                                    <article className="overflow-hidden rounded-[1.5rem] border border-white/10 bg-[radial-gradient(circle_at_top,rgba(125,211,252,0.16),transparent_40%),linear-gradient(180deg,rgba(15,23,42,0.95),rgba(2,6,23,0.95))] p-5">
-                                        <p className="text-[11px] uppercase tracking-[0.35em] text-slate-400">Ubicación</p>
+                                    <article className="overflow-hidden rounded-[1.5rem] border border-[#FCD2AB]/20 bg-[radial-gradient(circle_at_top,rgba(125,211,252,0.16),transparent_40%),linear-gradient(180deg,rgba(15,23,42,0.95),rgba(2,6,23,0.95))] p-5">
+                                        <p className="text-[11px] uppercase tracking-[0.35em] text-[#ABD5FC]/70">Ubicación</p>
                                         <h4 className="mt-2 text-xl font-semibold text-white">Finca de Javier Mendoza</h4>
-                                        <p className="mt-2 text-sm leading-6 text-slate-300">
+                                        <p className="mt-2 text-sm leading-6 text-white/75">
                                             Está ubicada en los lugares de Chicoral, en un espacio muy bonito y tranquilo para la celebración.
                                         </p>
-                                        <div className="mt-4 rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-slate-200">
-                                            <p className="text-[11px] uppercase tracking-[0.3em] text-slate-400">Referencia</p>
+                                        <div className="mt-4 rounded-2xl border border-[#FCD2AB]/20 bg-[#FCD2AB]/8 p-4 text-sm text-white/90">
+                                            <p className="text-[11px] uppercase tracking-[0.3em] text-[#ABD5FC]/70">Referencia</p>
                                             <p className="mt-2 font-medium text-white">Portón grande marrón al lado de la central</p>
                                         </div>
-                                        <div className="mt-4 overflow-hidden rounded-2xl border border-white/10 bg-slate-950/55">
+                                        <div className="mt-4 overflow-hidden rounded-2xl border border-[#FCD2AB]/20 bg-[#FCD2AB]/8">
                                             <iframe
                                                 title={eventLocationLabel}
                                                 src={eventMapEmbedUrl}
@@ -882,9 +882,9 @@ function EventAppContent() {
                                                 loading="lazy"
                                                 referrerPolicy="no-referrer-when-downgrade"
                                             />
-                                            <div className="border-t border-white/10 p-4 text-sm text-slate-200">
-                                                <p className="text-[11px] uppercase tracking-[0.3em] text-slate-400">Vista previa</p>
-                                                <p className="mt-2 text-sm leading-6 text-slate-300">
+                                            <div className="border-t border-[#FCD2AB]/20 p-4 text-sm text-white/90">
+                                                <p className="text-[11px] uppercase tracking-[0.3em] text-[#ABD5FC]/70">Vista previa</p>
+                                                <p className="mt-2 text-sm leading-6 text-white/75">
                                                     Esta vista se abre sin API y te deja ver la ubicación antes de tocar en Maps o Waze.
                                                 </p>
                                             </div>
@@ -893,7 +893,7 @@ function EventAppContent() {
                                             {mapLinks.map((link) => (
                                                 <a
                                                     key={link.label}
-                                                    className="inline-flex flex-1 items-center justify-center rounded-2xl border border-white/10 bg-slate-950/55 px-4 py-3 text-sm font-medium text-white transition hover:bg-white/10"
+                                                    className="inline-flex flex-1 items-center justify-center rounded-2xl border border-[#FCD2AB]/20 bg-[#FCD2AB]/8 px-4 py-3 text-sm font-medium text-white transition hover:bg-[#FCD2AB]/12"
                                                     href={link.href}
                                                     target="_blank"
                                                     rel="noreferrer"
@@ -905,27 +905,27 @@ function EventAppContent() {
                                     </article>
 
                                     <div className="grid gap-4 sm:grid-cols-2">
-                                        <article className="h-full rounded-[1.5rem] border border-white/10 bg-white/5 p-5">
-                                        <p className="text-[11px] uppercase tracking-[0.35em] text-slate-400">Código de vestimenta</p>
+                                        <article className="h-full rounded-[1.5rem] border border-[#FCD2AB]/20 bg-[#FCD2AB]/8 p-5">
+                                        <p className="text-[11px] uppercase tracking-[0.35em] text-[#ABD5FC]/70">Código de vestimenta</p>
                                         <p className="mt-2 text-lg font-semibold text-white">Formal y colores claros</p>
-                                        <p className="mt-2 text-sm leading-6 text-slate-300">
+                                        <p className="mt-2 text-sm leading-6 text-white/75">
                                             Queremos que te sientas cómodo y te veas bien en la foto. Para la fiesta, ven formal y en colores claros.
                                         </p>
                                         </article>
 
-                                        <article className="h-full rounded-[1.5rem] border border-white/10 bg-white/5 p-5">
-                                            <p className="text-[11px] uppercase tracking-[0.35em] text-slate-400">Tips y notas</p>
+                                        <article className="h-full rounded-[1.5rem] border border-[#FCD2AB]/20 bg-[#FCD2AB]/8 p-5">
+                                            <p className="text-[11px] uppercase tracking-[0.35em] text-[#ABD5FC]/70">Tips y notas</p>
                                             <div className="mt-3 space-y-3">
                                             {eventNotes.map((item) => (
-                                                <div key={item} className="flex items-start gap-3 text-sm leading-6 text-slate-300">
-                                                    <span className="mt-1 h-2.5 w-2.5 rounded-full bg-cyan-200" />
+                                                <div key={item} className="flex items-start gap-3 text-sm leading-6 text-white/75">
+                                                    <span className="mt-1 h-2.5 w-2.5 rounded-full bg-[#FCD2AB]" />
                                                     <p>{item}</p>
                                                 </div>
                                             ))}
                                             </div>
                                             <div className="mt-4 flex flex-wrap gap-2">
                                             {eventReminders.map((item) => (
-                                                <span key={item} className="rounded-full border border-white/10 bg-slate-950/60 px-3 py-2 text-xs font-medium text-slate-200">
+                                                <span key={item} className="rounded-full border border-[#FCD2AB]/20 bg-[#FCD2AB]/8 px-3 py-2 text-xs font-medium text-white/90">
                                                     {item}
                                                 </span>
                                             ))}
@@ -936,42 +936,42 @@ function EventAppContent() {
                             </div>
 
                             <div className="mt-6 grid gap-4 lg:grid-cols-2">
-                                <article className="rounded-[1.5rem] border border-white/10 bg-white/5 p-5">
-                                    <p className="text-[11px] uppercase tracking-[0.35em] text-slate-400">Álbum de momentos</p>
+                                <article className="rounded-[1.5rem] border border-[#FCD2AB]/20 bg-[#FCD2AB]/8 p-5">
+                                    <p className="text-[11px] uppercase tracking-[0.35em] text-[#ABD5FC]/70">Álbum de momentos</p>
                                     <h4 className="mt-2 text-xl font-semibold text-white">{eventStats.albumPhotosCount} fotos compartidas</h4>
-                                    <p className="mt-2 text-sm leading-6 text-slate-300">
+                                    <p className="mt-2 text-sm leading-6 text-white/75">
                                         Sube tus mejores momentos y mira el álbum completo en una página aparte, más cómoda y con más espacio.
                                     </p>
                                     <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                                        <div className="rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-4">
-                                            <p className="text-sm text-slate-400">Momento de subir</p>
+                                        <div className="rounded-2xl border border-[#FCD2AB]/20 bg-[#FCD2AB]/8 px-4 py-4">
+                                            <p className="text-sm text-[#ABD5FC]/70">Momento de subir</p>
                                             <p className="mt-2 text-2xl font-semibold text-white">Comparte tus mejores recuerdos</p>
                                         </div>
-                                        <div className="rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-4">
-                                            <p className="text-sm text-slate-400">Vista completa</p>
+                                        <div className="rounded-2xl border border-[#FCD2AB]/20 bg-[#FCD2AB]/8 px-4 py-4">
+                                            <p className="text-sm text-[#ABD5FC]/70">Vista completa</p>
                                             <p className="mt-2 text-2xl font-semibold text-white">Galería aparte</p>
                                         </div>
                                     </div>
                                     <div className="mt-4 flex flex-col gap-3 sm:flex-row">
-                                        <a href="/album" className="inline-flex flex-1 items-center justify-center rounded-2xl bg-gradient-to-r from-slate-100 to-slate-300 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:opacity-90">
+                                        <a href="/album" className="inline-flex flex-1 items-center justify-center rounded-2xl bg-gradient-to-r from-[#FCD2AB] to-[#f0c090] px-4 py-3 text-sm font-semibold text-[#1a0f00] transition hover:opacity-90">
                                             Abrir álbum
                                         </a>
-                                        <a href="/album#upload" className="inline-flex flex-1 items-center justify-center rounded-2xl border border-white/10 bg-slate-950/55 px-4 py-3 text-sm font-medium text-white transition hover:bg-white/10">
+                                        <a href="/album#upload" className="inline-flex flex-1 items-center justify-center rounded-2xl border border-[#FCD2AB]/20 bg-[#FCD2AB]/8 px-4 py-3 text-sm font-medium text-white transition hover:bg-[#FCD2AB]/12">
                                             Subir foto
                                         </a>
                                     </div>
                                 </article>
 
-                                <article className="rounded-[1.5rem] border border-white/10 bg-white/5 p-5">
-                                    <p className="text-[11px] uppercase tracking-[0.35em] text-slate-400">Canciones para el DJ</p>
+                                <article className="rounded-[1.5rem] border border-[#FCD2AB]/20 bg-[#FCD2AB]/8 p-5">
+                                    <p className="text-[11px] uppercase tracking-[0.35em] text-[#ABD5FC]/70">Canciones para el DJ</p>
                                     <h4 className="mt-2 text-xl font-semibold text-white">{eventStats.songRequestsCount} canciones guardadas</h4>
-                                    <p className="mt-2 text-sm leading-6 text-slate-300">
+                                    <p className="mt-2 text-sm leading-6 text-white/75">
                                         Guarda tu canción favorita para que luego se la pasemos al DJ en una lista sencilla.
                                     </p>
 
                                     <form className="mt-4 space-y-3" onSubmit={handleSongSubmit}>
                                         <input
-                                            className="w-full rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition focus:border-cyan-300/40"
+                                            className="w-full rounded-2xl border border-[#FCD2AB]/20 bg-[#FCD2AB]/10 px-4 py-3 text-sm text-white placeholder:text-[#ABD5FC]/50 outline-none transition focus:border-[#ABD5FC]/40"
                                             placeholder="Nombre de la canción"
                                             value={songFormState.song_title}
                                             onChange={(event) => setSongFormState((current) => ({
@@ -981,7 +981,7 @@ function EventAppContent() {
                                             required
                                         />
                                         <input
-                                            className="w-full rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition focus:border-cyan-300/40"
+                                            className="w-full rounded-2xl border border-[#FCD2AB]/20 bg-[#FCD2AB]/10 px-4 py-3 text-sm text-white placeholder:text-[#ABD5FC]/50 outline-none transition focus:border-[#ABD5FC]/40"
                                             placeholder="Artista"
                                             value={songFormState.artist_name}
                                             onChange={(event) => setSongFormState((current) => ({
@@ -990,7 +990,7 @@ function EventAppContent() {
                                             }))}
                                         />
                                         <textarea
-                                            className="min-h-[96px] w-full rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition focus:border-cyan-300/40"
+                                            className="min-h-[96px] w-full rounded-2xl border border-[#FCD2AB]/20 bg-[#FCD2AB]/10 px-4 py-3 text-sm text-white placeholder:text-[#ABD5FC]/50 outline-none transition focus:border-[#ABD5FC]/40"
                                             placeholder="Nota opcional para el DJ"
                                             value={songFormState.note}
                                             onChange={(event) => setSongFormState((current) => ({
@@ -1000,7 +1000,7 @@ function EventAppContent() {
                                         />
                                         <button
                                             type="submit"
-                                            className="w-full rounded-2xl bg-gradient-to-r from-slate-100 to-slate-300 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+                                            className="w-full rounded-2xl bg-gradient-to-r from-[#FCD2AB] to-[#f0c090] px-4 py-3 text-sm font-semibold text-[#1a0f00] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
                                             disabled={songSubmissionState.status === 'loading'}
                                         >
                                             {songSubmissionState.status === 'loading' ? 'Guardando canción...' : 'Enviar canción'}
@@ -1013,72 +1013,72 @@ function EventAppContent() {
                                         </div>
                                     ) : null}
 
-                                    <div className="mt-4 rounded-2xl border border-cyan-300/20 bg-cyan-300/10 p-4 text-sm leading-6 text-cyan-50">
+                                    <div className="mt-4 rounded-2xl border border-[#FCD2AB]/20 bg-[#FCD2AB]/10 p-4 text-sm leading-6 text-white/90">
                                         La lista se exporta en PDF desde admin y el DJ recibe solo el archivo final.
                                     </div>
                                 </article>
                             </div>
 
-                            <section className="mt-6 min-w-0 rounded-[1.75rem] border border-white/10 bg-white/5 p-5">
+                            <section className="mt-6 min-w-0 rounded-[1.75rem] border border-[#FCD2AB]/20 bg-[#FCD2AB]/8 p-5">
                                 <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
                                     <div>
-                                        <p className="text-[11px] uppercase tracking-[0.35em] text-slate-400">Cierre visual</p>
+                                        <p className="text-[11px] uppercase tracking-[0.35em] text-[#ABD5FC]/70">Cierre visual</p>
                                         <h4 className="mt-2 text-2xl font-semibold text-white">{featuredPhotos.count} fotos de la quinceañera</h4>
-                                        <p className="mt-2 text-sm leading-6 text-slate-300">Un carrusel automático con las fotos principales para cerrar la invitación con estilo.</p>
+                                        <p className="mt-2 text-sm leading-6 text-white/75">Un carrusel automático con las fotos principales para cerrar la invitación con estilo.</p>
                                     </div>
-                                    <a href="/album" className="inline-flex items-center justify-center rounded-2xl border border-white/10 bg-slate-950/55 px-4 py-3 text-sm font-medium text-white transition hover:bg-white/10">
+                                    <a href="/album" className="inline-flex items-center justify-center rounded-2xl border border-[#FCD2AB]/20 bg-[#FCD2AB]/8 px-4 py-3 text-sm font-medium text-white transition hover:bg-[#FCD2AB]/12">
                                         Ver álbum completo
                                     </a>
                                 </div>
 
-                                <div className="mt-5 w-full max-w-full overflow-hidden rounded-[1.5rem] border border-white/10 bg-slate-950/70 p-3">
+                                <div className="mt-5 w-full max-w-full overflow-hidden rounded-[1.5rem] border border-[#FCD2AB]/20 bg-[#FCD2AB]/10 p-3">
                                     {featuredPhotos.photos.length ? (
                                         <div className="relative h-[clamp(15rem,34vw,22rem)] w-full overflow-hidden rounded-[1.25rem]">
                                             <div className="marquee-track absolute inset-y-0 left-0 flex gap-4 px-0 pr-4">
                                                 {[...featuredPhotos.photos, ...featuredPhotos.photos].map((photo, index) => (
-                                                    <article key={`${photo.id}-${index}`} className="group relative h-full aspect-[3/4] w-[clamp(11rem,28vw,16rem)] shrink-0 overflow-hidden rounded-[1.5rem] border border-white/10 bg-slate-900/80 sm:w-[clamp(12rem,22vw,18rem)]">
+                                                    <article key={`${photo.id}-${index}`} className="group relative h-full aspect-[3/4] w-[clamp(11rem,28vw,16rem)] shrink-0 overflow-hidden rounded-[1.5rem] border border-[#FCD2AB]/20 bg-[#1a0f00]/60 sm:w-[clamp(12rem,22vw,18rem)]">
                                                         <img src={photo.photo_url} alt="Foto de la quinceañera" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
                                                         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/90 via-slate-950/35 to-transparent p-4">
-                                                            <p className="text-xs uppercase tracking-[0.3em] text-slate-300">Quinceañera</p>
+                                                            <p className="text-xs uppercase tracking-[0.3em] text-white/75">Quinceañera</p>
                                                         </div>
                                                     </article>
                                                 ))}
                                             </div>
                                         </div>
                                     ) : (
-                                        <div className="flex min-h-72 items-center justify-center rounded-[1.25rem] border border-dashed border-white/10 bg-white/5 text-sm text-slate-400">
+                                        <div className="flex min-h-72 items-center justify-center rounded-[1.25rem] border border-dashed border-[#FCD2AB]/20 bg-[#FCD2AB]/8 text-sm text-[#ABD5FC]/70">
                                             Todavía no hay fotos cargadas para el carrusel final.
                                         </div>
                                     )}
                                 </div>
                             </section>
 
-                            <section className="mt-6 min-w-0 rounded-[1.75rem] border border-white/10 bg-white/5 p-5">
+                            <section className="mt-6 min-w-0 rounded-[1.75rem] border border-[#FCD2AB]/20 bg-[#FCD2AB]/8 p-5">
                                 <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:gap-8">
-                                    <div className="flex shrink-0 items-center justify-center rounded-[1.5rem] border border-cyan-300/20 bg-cyan-300/10 p-5 lg:p-6">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" className="text-cyan-100" viewBox="0 0 16 16">
+                                    <div className="flex shrink-0 items-center justify-center rounded-[1.5rem] border border-[#FCD2AB]/20 bg-[#FCD2AB]/10 p-5 lg:p-6">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" className="text-[#FCD2AB]" viewBox="0 0 16 16">
                                             <path d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414zM0 4.697v7.104l5.803-3.558zM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586zm3.436-.586L16 11.801V4.697z"/>
                                         </svg>
                                     </div>
                                     <div className="flex-1 space-y-3">
                                         <div>
-                                            <p className="text-[11px] uppercase tracking-[0.35em] text-slate-400">Tradición especial</p>
+                                            <p className="text-[11px] uppercase tracking-[0.35em] text-[#ABD5FC]/70">Tradición especial</p>
                                             <h4 className="mt-2 text-2xl font-semibold text-white">Lluvia de sobres</h4>
-                                            <p className="mt-2 text-sm leading-6 text-slate-300">
+                                            <p className="mt-2 text-sm leading-6 text-white/75">
                                                 Como parte de la celebración habrá una lluvia de sobres. Cada grupo de invitados entrega un sobre — es la forma más bonita de acompañar a la quinceañera en este momento tan especial.
                                             </p>
                                         </div>
                                         <div className="grid gap-3 sm:grid-cols-3">
-                                            <div className="rounded-2xl border border-white/10 bg-slate-950/55 px-4 py-3">
-                                                <p className="text-[11px] uppercase tracking-[0.3em] text-slate-400">¿Quién entrega?</p>
+                                            <div className="rounded-2xl border border-[#FCD2AB]/20 bg-[#FCD2AB]/8 px-4 py-3">
+                                                <p className="text-[11px] uppercase tracking-[0.3em] text-[#ABD5FC]/70">¿Quién entrega?</p>
                                                 <p className="mt-1 text-sm font-medium text-white">Un sobre por grupo</p>
                                             </div>
-                                            <div className="rounded-2xl border border-white/10 bg-slate-950/55 px-4 py-3">
-                                                <p className="text-[11px] uppercase tracking-[0.3em] text-slate-400">¿Cuándo?</p>
+                                            <div className="rounded-2xl border border-[#FCD2AB]/20 bg-[#FCD2AB]/8 px-4 py-3">
+                                                <p className="text-[11px] uppercase tracking-[0.3em] text-[#ABD5FC]/70">¿Cuándo?</p>
                                                 <p className="mt-1 text-sm font-medium text-white">Durante la fiesta</p>
                                             </div>
-                                            <div className="rounded-2xl border border-white/10 bg-slate-950/55 px-4 py-3">
-                                                <p className="text-[11px] uppercase tracking-[0.3em] text-slate-400">¿A quién?</p>
+                                            <div className="rounded-2xl border border-[#FCD2AB]/20 bg-[#FCD2AB]/8 px-4 py-3">
+                                                <p className="text-[11px] uppercase tracking-[0.3em] text-[#ABD5FC]/70">¿A quién?</p>
                                                 <p className="mt-1 text-sm font-medium text-white">Directamente a la quinceañera</p>
                                             </div>
                                         </div>
@@ -1087,35 +1087,35 @@ function EventAppContent() {
                             </section>
                         </section>
                     ) : (
-                        <section className="rounded-[2rem] border border-white/10 bg-slate-950/40 p-6 shadow-2xl shadow-slate-950/30 backdrop-blur-md xl:col-span-2">
+                        <section className="rounded-[2rem] border border-[#FCD2AB]/20 bg-[#FCD2AB]/8 p-6 shadow-2xl shadow-black/25 backdrop-blur-md xl:col-span-2">
                             <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
                                 <div>
-                                    <p className="text-[11px] uppercase tracking-[0.35em] text-slate-400">Módulo privado</p>
+                                    <p className="text-[11px] uppercase tracking-[0.35em] text-[#ABD5FC]/70">Módulo privado</p>
                                     <h3 className="mt-2 text-2xl font-semibold text-white">Ingresa con tu código para ver los detalles</h3>
-                                    <p className="mt-2 text-sm leading-6 text-slate-300">
+                                    <p className="mt-2 text-sm leading-6 text-white/75">
                                         Esta parte queda oculta hasta que recuperes tu registro con el código de acceso.
                                     </p>
                                 </div>
                                 <button
                                     type="button"
-                                    className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-4 py-2 text-xs font-medium uppercase tracking-[0.3em] text-cyan-100"
+                                    className="rounded-full border border-[#FCD2AB]/20 bg-[#FCD2AB]/10 px-4 py-2 text-xs font-medium uppercase tracking-[0.3em] text-[#FCD2AB]"
                                     onClick={() => setManualAccessOpen(true)}
                                 >
                                     Tengo mi código
                                 </button>
                             </div>
                             <div className="mt-6 grid gap-4 lg:grid-cols-2">
-                                <div className="rounded-[1.5rem] border border-white/10 bg-white/5 p-5">
-                                    <p className="text-[11px] uppercase tracking-[0.35em] text-slate-400">Qué verás</p>
+                                <div className="rounded-[1.5rem] border border-[#FCD2AB]/20 bg-[#FCD2AB]/8 p-5">
+                                    <p className="text-[11px] uppercase tracking-[0.35em] text-[#ABD5FC]/70">Qué verás</p>
                                     <p className="mt-2 text-lg font-semibold text-white">Horario, ubicación y recomendaciones</p>
-                                    <p className="mt-2 text-sm leading-6 text-slate-300">
+                                    <p className="mt-2 text-sm leading-6 text-white/75">
                                         Cuando validas tu acceso, desbloqueamos esta sección con la información completa de la fiesta.
                                     </p>
                                 </div>
-                                <div className="rounded-[1.5rem] border border-white/10 bg-white/5 p-5">
-                                    <p className="text-[11px] uppercase tracking-[0.35em] text-slate-400">Reingreso</p>
+                                <div className="rounded-[1.5rem] border border-[#FCD2AB]/20 bg-[#FCD2AB]/8 p-5">
+                                    <p className="text-[11px] uppercase tracking-[0.35em] text-[#ABD5FC]/70">Reingreso</p>
                                     <p className="mt-2 text-lg font-semibold text-white">Si ya te registraste, recupera tu código</p>
-                                    <p className="mt-2 text-sm leading-6 text-slate-300">
+                                    <p className="mt-2 text-sm leading-6 text-white/75">
                                         Usa el botón del panel lateral para volver a cargar tu invitación y entrar de nuevo.
                                     </p>
                                 </div>
@@ -1123,13 +1123,13 @@ function EventAppContent() {
                         </section>
                     )}
 
-                    <aside className="space-y-6 rounded-[2rem] border border-white/10 bg-slate-950/40 p-6 shadow-2xl shadow-slate-950/30 backdrop-blur-md">
+                    <aside className="space-y-6 rounded-[2rem] border border-[#FCD2AB]/20 bg-[#FCD2AB]/8 p-6 shadow-2xl shadow-black/25 backdrop-blur-md">
                         <div>
-                            <p className="text-[11px] uppercase tracking-[0.35em] text-slate-400">{hasRegistration ? 'Tu acceso' : 'Registro'}</p>
+                            <p className="text-[11px] uppercase tracking-[0.35em] text-[#ABD5FC]/70">{hasRegistration ? 'Tu acceso' : 'Registro'}</p>
                             <h3 className="mt-2 text-2xl font-semibold text-white">
                                 {hasRegistration ? 'Ya estás dentro' : 'Titular + hasta 4 acompañantes'}
                             </h3>
-                            <p className="mt-3 text-sm leading-6 text-slate-300">
+                            <p className="mt-3 text-sm leading-6 text-white/75">
                                 {hasRegistration
                                     ? 'Tu QR quedó guardado localmente para que lo abras rápido junto con los detalles del evento.'
                                     : 'El sistema guardará cada persona por separado para validar nombres exactos, cupos y asistencia el día del evento.'}
@@ -1139,7 +1139,7 @@ function EventAppContent() {
                         {!restoringSession && !hasRegistration ? (
                             <form className="space-y-4" onSubmit={openConfirmation}>
                             <input
-                                className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition focus:border-cyan-300/40"
+                                className="w-full rounded-2xl border border-[#FCD2AB]/20 bg-[#FCD2AB]/8 px-4 py-3 text-sm text-white placeholder:text-[#ABD5FC]/50 outline-none transition focus:border-[#ABD5FC]/40"
                                 placeholder="Nombre completo del titular"
                                 value={formState.titular_name}
                                 onChange={(event) => updateField('titular_name', event.target.value)}
@@ -1147,13 +1147,13 @@ function EventAppContent() {
                             />
                             <input
                                 type="email"
-                                className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition focus:border-cyan-300/40"
+                                className="w-full rounded-2xl border border-[#FCD2AB]/20 bg-[#FCD2AB]/8 px-4 py-3 text-sm text-white placeholder:text-[#ABD5FC]/50 outline-none transition focus:border-[#ABD5FC]/40"
                                 placeholder="Correo del titular"
                                 value={formState.titular_email}
                                 onChange={(event) => updateField('titular_email', event.target.value)}
                             />
                             <input
-                                className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition focus:border-cyan-300/40"
+                                className="w-full rounded-2xl border border-[#FCD2AB]/20 bg-[#FCD2AB]/8 px-4 py-3 text-sm text-white placeholder:text-[#ABD5FC]/50 outline-none transition focus:border-[#ABD5FC]/40"
                                 placeholder="Teléfono del titular"
                                 value={formState.titular_phone}
                                 onChange={(event) => updateField('titular_phone', event.target.value)}
@@ -1162,7 +1162,7 @@ function EventAppContent() {
                                 {formState.guests.map((guest, index) => (
                                     <input
                                         key={`guest-${index}`}
-                                        className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition focus:border-cyan-300/40"
+                                        className="w-full rounded-2xl border border-[#FCD2AB]/20 bg-[#FCD2AB]/8 px-4 py-3 text-sm text-white placeholder:text-[#ABD5FC]/50 outline-none transition focus:border-[#ABD5FC]/40"
                                         placeholder={`Acompañante ${index + 1}`}
                                         value={guest}
                                         onChange={(event) => updateGuest(index, event.target.value)}
@@ -1171,7 +1171,7 @@ function EventAppContent() {
                             </div>
                             <button
                                 type="submit"
-                                className="w-full rounded-2xl bg-gradient-to-r from-slate-100 to-slate-300 px-4 py-3 font-semibold text-slate-950 transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+                                className="w-full rounded-2xl bg-gradient-to-r from-[#FCD2AB] to-[#f0c090] px-4 py-3 font-semibold text-[#1a0f00] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
                                 disabled={submissionState.status === 'loading' || !eventStats.registrationOpen}
                             >
                                 {submissionState.status === 'loading' ? 'Registrando...' : eventStats.registrationOpen ? 'Confirmar registro' : 'Registro cerrado'}
@@ -1180,10 +1180,10 @@ function EventAppContent() {
                         ) : null}
 
                         {!restoringSession && !hasRegistration ? (
-                            <div className="space-y-3 rounded-[1.5rem] border border-white/10 bg-white/5 p-4">
+                            <div className="space-y-3 rounded-[1.5rem] border border-[#FCD2AB]/20 bg-[#FCD2AB]/8 p-4">
                                 <button
                                     type="button"
-                                    className="w-full rounded-2xl border border-white/10 bg-slate-950/55 px-4 py-3 text-sm font-medium text-white transition hover:bg-white/10"
+                                    className="w-full rounded-2xl border border-[#FCD2AB]/20 bg-[#FCD2AB]/8 px-4 py-3 text-sm font-medium text-white transition hover:bg-[#FCD2AB]/12"
                                     onClick={() => setManualAccessOpen((current) => !current)}
                                 >
                                     Ya tengo mi código de acceso
@@ -1192,7 +1192,7 @@ function EventAppContent() {
                                 {manualAccessOpen ? (
                                     <form className="space-y-3" onSubmit={handleAccessCodeSubmit}>
                                         <input
-                                            className="w-full rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition focus:border-cyan-300/40"
+                                            className="w-full rounded-2xl border border-[#FCD2AB]/20 bg-[#FCD2AB]/10 px-4 py-3 text-sm text-white placeholder:text-[#ABD5FC]/50 outline-none transition focus:border-[#ABD5FC]/40"
                                             placeholder="Ej: K7M4-Q2P9"
                                             value={accessCodeInput}
                                             onChange={(event) => setAccessCodeInput(event.target.value.toUpperCase())}
@@ -1200,7 +1200,7 @@ function EventAppContent() {
                                         />
                                         <button
                                             type="submit"
-                                            className="w-full rounded-2xl bg-gradient-to-r from-slate-100 to-slate-300 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:opacity-90"
+                                            className="w-full rounded-2xl bg-gradient-to-r from-[#FCD2AB] to-[#f0c090] px-4 py-3 text-sm font-semibold text-[#1a0f00] transition hover:opacity-90"
                                         >
                                             Validar código
                                         </button>
@@ -1226,14 +1226,14 @@ function EventAppContent() {
                                         ? 'border-emerald-300/20 bg-emerald-300/10 text-emerald-100'
                                         : submissionState.status === 'error'
                                             ? 'border-rose-300/20 bg-rose-300/10 text-rose-100'
-                                            : 'border-cyan-300/20 bg-cyan-300/10 text-cyan-100'
+                                            : 'border-[#FCD2AB]/20 bg-[#FCD2AB]/10 text-[#FCD2AB]'
                                 }`}
                             >
                                 <p>{submissionState.message}</p>
                                 {submissionState.status === 'success' && submissionState.registration ? (
                                     <button
                                         type="button"
-                                        className="mt-3 inline-flex rounded-2xl border border-white/10 bg-white/10 px-4 py-2 text-xs font-medium uppercase tracking-[0.28em] text-white transition hover:bg-white/15"
+                                        className="mt-3 inline-flex rounded-2xl border border-[#FCD2AB]/20 bg-[#FCD2AB]/12 px-4 py-2 text-xs font-medium uppercase tracking-[0.28em] text-white transition hover:bg-[#FCD2AB]/15"
                                         onClick={scrollToEventDetails}
                                     >
                                         Ver detalles del evento
@@ -1243,27 +1243,27 @@ function EventAppContent() {
                         ) : null}
 
                         {hasRegistration ? (
-                            <div className="rounded-[1.5rem] border border-white/10 bg-slate-950/60 p-5">
-                                <p className="text-[11px] uppercase tracking-[0.35em] text-slate-400">Tu QR</p>
-                                <p className="mt-2 text-sm text-slate-300">
+                            <div className="rounded-[1.5rem] border border-[#FCD2AB]/20 bg-[#FCD2AB]/8 p-5">
+                                <p className="text-[11px] uppercase tracking-[0.35em] text-[#ABD5FC]/70">Tu QR</p>
+                                <p className="mt-2 text-sm text-white/75">
                                     Guarda o descarga este código para mostrarlo en la entrada.
                                 </p>
-                                <div className="mt-4 overflow-hidden rounded-3xl border border-white/10 bg-white p-4">
+                                <div className="mt-4 overflow-hidden rounded-3xl border border-[#FCD2AB]/20 bg-white p-4">
                                     <img
                                         alt="Código QR de registro"
                                         className="mx-auto h-64 w-64"
                                         src={submissionState.registration.qr_image_url}
                                     />
                                 </div>
-                                <div className="mt-4 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-200">
-                                    <p className="text-[11px] uppercase tracking-[0.3em] text-slate-400">Código de acceso</p>
+                                <div className="mt-4 rounded-2xl border border-[#FCD2AB]/20 bg-[#FCD2AB]/8 px-4 py-3 text-sm text-white/90">
+                                    <p className="text-[11px] uppercase tracking-[0.3em] text-[#ABD5FC]/70">Código de acceso</p>
                                     <p className="mt-1 text-base font-semibold tracking-[0.2em] text-white">
                                         {submissionState.registration.access_code}
                                     </p>
                                 </div>
                                 <div className="mt-4 flex flex-col gap-3 sm:flex-row">
                                     <a
-                                        className="inline-flex flex-1 items-center justify-center rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-medium text-white transition hover:bg-white/10"
+                                        className="inline-flex flex-1 items-center justify-center rounded-2xl border border-[#FCD2AB]/20 bg-[#FCD2AB]/8 px-4 py-3 text-sm font-medium text-white transition hover:bg-[#FCD2AB]/12"
                                         href={submissionState.registration.qr_image_url}
                                         target="_blank"
                                         rel="noreferrer"
@@ -1271,7 +1271,7 @@ function EventAppContent() {
                                         Ver QR
                                     </a>
                                     <a
-                                        className="inline-flex flex-1 items-center justify-center rounded-2xl bg-gradient-to-r from-slate-100 to-slate-300 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:opacity-90"
+                                        className="inline-flex flex-1 items-center justify-center rounded-2xl bg-gradient-to-r from-[#FCD2AB] to-[#f0c090] px-4 py-3 text-sm font-semibold text-[#1a0f00] transition hover:opacity-90"
                                         href={submissionState.registration.qr_download_url}
                                         download
                                     >
@@ -1279,7 +1279,7 @@ function EventAppContent() {
                                     </a>
                                     <button
                                         type="button"
-                                        className="inline-flex flex-1 items-center justify-center rounded-2xl bg-cyan-300/15 px-4 py-3 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-300/20"
+                                        className="inline-flex flex-1 items-center justify-center rounded-2xl bg-[#FCD2AB]/12 px-4 py-3 text-sm font-semibold text-[#FCD2AB] transition hover:bg-[#FCD2AB]/15"
                                         onClick={async () => {
                                             try {
                                                 await downloadSvgAsPng(
@@ -1306,14 +1306,14 @@ function EventAppContent() {
                                 </div>
                                 <button
                                     type="button"
-                                    className="mt-4 w-full rounded-2xl border border-cyan-300/20 bg-cyan-300/10 px-4 py-3 text-sm font-medium text-cyan-100 transition hover:bg-cyan-300/20"
+                                    className="mt-4 w-full rounded-2xl border border-[#FCD2AB]/20 bg-[#FCD2AB]/10 px-4 py-3 text-sm font-medium text-[#FCD2AB] transition hover:bg-[#FCD2AB]/15"
                                     onClick={scrollToEventDetails}
                                 >
                                     Ver detalles del evento
                                 </button>
                                 <button
                                     type="button"
-                                    className="mt-4 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-medium text-white transition hover:bg-white/10"
+                                    className="mt-4 w-full rounded-2xl border border-[#FCD2AB]/20 bg-[#FCD2AB]/8 px-4 py-3 text-sm font-medium text-white transition hover:bg-[#FCD2AB]/12"
                                     onClick={() => {
                                         window.localStorage.removeItem(storageKey);
                                         setSubmissionState({
@@ -1328,9 +1328,9 @@ function EventAppContent() {
                             </div>
                         ) : null}
 
-                        <div className="rounded-[1.5rem] border border-cyan-200/10 bg-cyan-300/5 p-5">
-                            <p className="text-sm font-medium text-cyan-100">Siguiente paso</p>
-                            <p className="mt-2 text-sm leading-6 text-slate-300">
+                        <div className="rounded-[1.5rem] border border-[#ABD5FC]/15 bg-[#ABD5FC]/6 p-5">
+                            <p className="text-sm font-medium text-[#FCD2AB]">Siguiente paso</p>
+                            <p className="mt-2 text-sm leading-6 text-white/75">
                                 Cuando el registro exista, el invitado verá los detalles del evento, podrá regresar con su código y se desbloqueará el panel de recomendaciones y álbum.
                             </p>
                         </div>
