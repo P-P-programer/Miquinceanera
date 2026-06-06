@@ -647,10 +647,11 @@ function EventAppContent() {
     }
 
     const eventDetails = [
-        { label: 'Entrada', value: '7:30 PM' },
-        { label: 'Quinceañera', value: '9:00 PM' },
-        { label: 'Fiesta', value: '10:00 PM' },
-        { label: 'Cierre', value: '3:00 AM' },
+        { label: 'Entrada',      value: '7:30 PM', icon: null,           iconSvg: true  },
+        { label: 'Quinceañera',  value: '9:00 PM', icon: '/vestido.png',  iconSvg: false },
+        { label: 'Cena',         value: '9:30 PM', icon: '/cena.png',     iconSvg: false },
+        { label: 'Fiesta',       value: '10:00 PM',icon: '/copas.png',    iconSvg: false },
+        { label: 'Cierre',       value: '3:00 AM', icon: '/porton.png',   iconSvg: false },
     ];
 
     const eventNotes = [
@@ -667,10 +668,11 @@ function EventAppContent() {
     ];
 
     const eventAgenda = [
-        { time: '7:30 PM', title: 'Entrada', description: 'Llegada de invitados y recepción.' },
-        { time: '9:00 PM', title: 'Quinceañera', description: 'Momento principal, fotos y presentación especial.' },
-        { time: '10:00 PM', title: 'Fiesta', description: 'Empieza la celebración, baile y música.' },
-        { time: '3:00 AM', title: 'Cierre', description: 'Última canción, despedida y fin de la fiesta.' },
+        { time: '7:30 PM',  title: 'Entrada',      description: 'Llegada de invitados y recepción.',                              icon: null,           iconSvg: true  },
+        { time: '9:00 PM',  title: 'Quinceañera',  description: 'Momento principal, fotos y presentación especial.',              icon: '/vestido.png',  iconSvg: false },
+        { time: '9:30 PM',  title: 'Cena',          description: 'Cena especial para celebrar junto a la quinceañera.',           icon: '/cena.png',     iconSvg: false },
+        { time: '10:00 PM', title: 'Fiesta',        description: 'Empieza la celebración, baile y música.',                       icon: '/copas.png',    iconSvg: false },
+        { time: '3:00 AM',  title: 'Cierre',        description: 'Última canción, despedida y fin de la fiesta.',                 icon: '/porton.png',   iconSvg: false },
     ];
 
     const eventHighlights = [
@@ -810,8 +812,17 @@ function EventAppContent() {
                                     </div>
                                     <div className="mt-4 grid gap-2">
                                         {eventDetails.map((item) => (
-                                            <div key={item.label} className="flex items-start justify-between gap-4 rounded-2xl border border-[#FCD2AB]/15 bg-[#FCD2AB]/8 px-4 py-3 text-sm text-white/75">
-                                                <span className="text-[#ABD5FC]/70">{item.label}</span>
+                                            <div key={item.label} className="flex items-center justify-between gap-4 rounded-2xl border border-[#FCD2AB]/15 bg-[#FCD2AB]/8 px-4 py-3 text-sm">
+                                                <span className="flex items-center gap-2 text-[#ABD5FC]/80">
+                                                    {item.iconSvg ? (
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" className="shrink-0 opacity-80" viewBox="0 0 16 16">
+                                                            <path d="M8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4.5a.5.5 0 0 0 .5-.5v-4h2v4a.5.5 0 0 0 .5.5H14a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293z"/>
+                                                        </svg>
+                                                    ) : item.icon ? (
+                                                        <img src={item.icon} alt="" className="h-4 w-4 shrink-0 object-contain opacity-80" />
+                                                    ) : null}
+                                                    {item.label}
+                                                </span>
                                                 <span className="text-right font-medium text-white">{item.value}</span>
                                             </div>
                                         ))}
@@ -847,8 +858,17 @@ function EventAppContent() {
                                 <div className="space-y-4">
                                     {eventAgenda.map((item, index) => (
                                         <article key={item.time} className="flex gap-4 rounded-[1.5rem] border border-[#FCD2AB]/20 bg-[#FCD2AB]/8 p-4">
-                                            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-[#FCD2AB]/20 bg-[#FCD2AB]/10 text-center text-xs font-semibold uppercase tracking-[0.25em] text-[#FCD2AB]">
-                                                {item.time}
+                                            <div className="flex h-14 w-14 shrink-0 flex-col items-center justify-center gap-1 rounded-2xl border border-[#FCD2AB]/30 bg-[#FCD2AB]/12 text-center">
+                                                {item.iconSvg ? (
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" className="text-[#FCD2AB]" viewBox="0 0 16 16">
+                                                        <path d="M8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4.5a.5.5 0 0 0 .5-.5v-4h2v4a.5.5 0 0 0 .5.5H14a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293z"/>
+                                                    </svg>
+                                                ) : (
+                                                    <img src={item.icon} alt={item.title} className="h-6 w-6 object-contain" />
+                                                )}
+                                                <span className="text-[9px] font-semibold leading-tight text-[#FCD2AB]">
+                                                    {item.time.replace(/(AM|PM)/, '').trim()}<span className="opacity-60">{item.time.match(/(AM|PM)/)?.[0]}</span>
+                                                </span>
                                             </div>
                                             <div className="min-w-0 flex-1">
                                                 <div className="flex items-start justify-between gap-3">
@@ -906,11 +926,23 @@ function EventAppContent() {
 
                                     <div className="grid gap-4 sm:grid-cols-2">
                                         <article className="h-full rounded-[1.5rem] border border-[#FCD2AB]/20 bg-[#FCD2AB]/8 p-5">
-                                        <p className="text-[11px] uppercase tracking-[0.35em] text-[#ABD5FC]/70">Código de vestimenta</p>
-                                        <p className="mt-2 text-lg font-semibold text-white">Formal y colores claros</p>
-                                        <p className="mt-2 text-sm leading-6 text-white/75">
-                                            Queremos que te sientas cómodo y te veas bien en la foto. Para la fiesta, ven formal y en colores claros.
-                                        </p>
+                                            <p className="text-[11px] uppercase tracking-[0.35em] text-[#ABD5FC]/70">Código de vestimenta</p>
+                                            <p className="mt-2 text-lg font-semibold text-white">Formal y colores claros</p>
+                                            <p className="mt-2 text-sm leading-6 text-white/75">
+                                                Queremos que te sientas cómodo y te veas bien en la foto. Para la fiesta, ven formal y en colores claros.
+                                            </p>
+                                            <div className="mt-4 grid grid-cols-2 gap-3">
+                                                <div className="flex flex-col items-center gap-2 rounded-2xl border border-[#ABD5FC]/20 bg-[#ABD5FC]/8 px-3 py-4">
+                                                    <img src="/traje.png" alt="Ellos" className="h-14 w-14 object-contain" />
+                                                    <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#ABD5FC]">Ellos</p>
+                                                    <p className="text-center text-xs leading-5 text-white/70">Ellos guapos</p>
+                                                </div>
+                                                <div className="flex flex-col items-center gap-2 rounded-2xl border border-[#FCD2AB]/20 bg-[#FCD2AB]/10 px-3 py-4">
+                                                    <img src="/dress2.png" alt="Ellas" className="h-14 w-14 object-contain" />
+                                                    <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#FCD2AB]">Ellas</p>
+                                                    <p className="text-center text-xs leading-5 text-white/70">Ellas divinas</p>
+                                                </div>
+                                            </div>
                                         </article>
 
                                         <article className="h-full rounded-[1.5rem] border border-[#FCD2AB]/20 bg-[#FCD2AB]/8 p-5">
@@ -1056,9 +1088,7 @@ function EventAppContent() {
                             <section className="mt-6 min-w-0 rounded-[1.75rem] border border-[#FCD2AB]/20 bg-[#FCD2AB]/8 p-5">
                                 <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:gap-8">
                                     <div className="flex shrink-0 items-center justify-center rounded-[1.5rem] border border-[#FCD2AB]/20 bg-[#FCD2AB]/10 p-5 lg:p-6">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" className="text-[#FCD2AB]" viewBox="0 0 16 16">
-                                            <path d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414zM0 4.697v7.104l5.803-3.558zM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586zm3.436-.586L16 11.801V4.697z"/>
-                                        </svg>
+                                        <img src="/sobredinero.png" alt="Sobre" className="h-14 w-14 object-contain" />
                                     </div>
                                     <div className="flex-1 space-y-3">
                                         <div>
